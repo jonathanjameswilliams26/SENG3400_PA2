@@ -1,6 +1,6 @@
 public class Login {
 
-    private static LoginLogic logic = new LoginLogic();
+    private static IdentityLogic logic = new IdentityLogic();
 
     /**
      * The endpoint which logs a user into the application.
@@ -12,5 +12,16 @@ public class Login {
      */
     public String login(String username, String password) {
         return logic.login(username, password);
+    }
+
+    /**
+     * The endpoint which logs a user out of the application.
+     * 
+     * @param key - The users session key.
+     * @return - A random 5 character string which is the session key. If the
+     *         username or password is incorrect "INVALID" is returned.
+     */
+    public boolean logout(String key) {
+        return logic.logout(key);
     }
 }

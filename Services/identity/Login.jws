@@ -1,6 +1,6 @@
 public class Login {
 
-    private static LoginLogic logic = new LoginLogic();
+    private static IdentityLogic logic = new IdentityLogic();
 
     /**
      * The endpoint which logs a user into the application.
