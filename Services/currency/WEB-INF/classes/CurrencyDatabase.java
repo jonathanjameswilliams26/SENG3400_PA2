@@ -46,8 +46,24 @@ public class CurrencyDatabase {
 
 
     public boolean removeCurrency(String code) {
-        //TODO: complete method
-        return false;
+        
+        //Check the currency code passed in exists
+        if(!currencies.containsKey(code))
+        {
+            System.out.println("ERROR: Cannot remove currency. The currency code does not exist in the database.");
+            return false;
+        }
+        
+        //The currency exists, remove from database
+        currencies.remove(code);
+
+        //Get all the currencies in the DB and remove the rate from each
+        for (Currency currency : getAllCurrencies()) {
+            if(currency.containsRate(code))
+                currency.removeRate(code);
+        }
+
+        return true;
     }
 
     public Currency[] getAllCurrencies() {
@@ -127,8 +143,24 @@ public class CurrencyDatabase {
 
 
     public boolean removeRate(String fromCode, String toCode) {
-        //TODO: implement method
-        return false;
+        
+        //Confirm the the currency codes exist in the database
+        if(!currencies.containsKey(fromCode))
+        {
+            System.out.println("ERROR: Cannot remove rate. The fromCode does not exist in the database.");
+            return false;
+        }
+        if(!currencies.containsKey(toCode))
+        {
+            System.out.println("ERROR: Cannot remove rate. The toCode does not exist in the database.");
+            return false;
+        }
+
+        //Get the currency to remove from
+        Currency removeFrom = getCurrency(fromCode);
+
+        //Remove the rate from the currency
+        return removeFrom.removeRate(toCode);
     }
 
 

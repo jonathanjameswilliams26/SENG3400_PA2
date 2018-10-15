@@ -11,6 +11,10 @@ public class Currency {
         rates = new HashMap<>();
         isTradeable = false;
     }
+
+    public String getCode() { 
+        return code;
+    }
     
     public boolean addRate(String codeToAdd, double rate) {
         
@@ -93,6 +97,12 @@ public class Currency {
         //Calculate the conversion including the 1% conversion fee
         return amount * rates.get(convertToCode) * 0.99;
     }
+
+
+    public boolean containsRate(String code) {
+        return rates.containsKey(code);
+    }
+
 
     public String[] getRates() {
 

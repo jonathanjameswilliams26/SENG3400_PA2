@@ -1,57 +1,9 @@
 import java.rmi.RemoteException;
 import javax.xml.rpc.ServiceException;
 import javax.security.sasl.AuthenticationException;
-import localhost.identity.Authorisation_jws.*;
+public class Admin {
 
-public class CurrencyController {
-    
-    //CONSTANTS
-    private static final double INVALID_REQUEST = -1.0;
-    
-    //The "fake" database which holds all the currency information
-    private static CurrencyDatabase database = new CurrencyDatabase();
-
-    public String[] listRates() {
-        //Call the database to get all the rates of all the currencies
-        return database.getAllRates();
-    }
-
-    public double rateOf(String fromCurrencyCode, String toCurrencyCode) {
-        Currency currency = database.getCurrency(fromCurrencyCode);
-
-        //The fromCurrencyCode does not exist in the database, return the negative value to indicate an error
-        if(currency == null)
-            return INVALID_REQUEST;
-
-        //Get the rate of the toCurrencyCode
-        return currency.rateOf(toCurrencyCode);
-    }
-
-    public double convert(String fromCurrencyCode, String toCurrencyCode, double amount) {
-        
-        Currency currency = database.getCurrency(fromCurrencyCode);
-
-        //The fromCurrencyCode does not exist in the database, return the negative value to indicate an error
-        if(currency == null)
-            return INVALID_REQUEST;
-
-        return currency.convert(toCurrencyCode, amount);
-    }
-
-
-
-
-    //Admin Methods which require session key validation
-    //----------------------------------------------------------------------
-    //----------------------------------------------------------------------
-
-    public String[] listRates(String sessionKey) throws ServiceException, RemoteException, AuthenticationException {
-
-        validateSessionKey(sessionKey);
-
-        return listRates();
-    }
-
+    private static CurrencyController contoller = new CurrencyController();
 
     /**
      * Adds a new currency to be converted by the Currency Service.
@@ -61,13 +13,8 @@ public class CurrencyController {
      * @return - TRUE if the currency was successfully added, FALSE otherwise.
      */
     public boolean addCurrency(String sessionKey, String currencyCode) throws ServiceException, RemoteException, AuthenticationException {
-        
-        validateSessionKey(sessionKey);
-
-        //Call the database to add the currency
-        return database.addCurrency(currencyCode);
+        return contoller.addCurrency(sessionKey, currencyCode);
     }
-
 
     /**
      * Removes a currency and all associated conversion rates from the service.
@@ -77,13 +24,8 @@ public class CurrencyController {
      * @return - TRUE if the currency was successfully removed, FALSE otherwise.
      */
     public boolean removeCurrency(String sessionKey, String currencyCode) throws ServiceException, RemoteException, AuthenticationException {
-        
-        validateSessionKey(sessionKey);
-
-        //Call the database to remove the currency
-        return database.removeCurrency(currencyCode);
+        return contoller.removeCurrency(sessionKey, currencyCode);
     }
-
 
     /**
      * Gets the list of all supported currencies for the service.
@@ -92,21 +34,7 @@ public class CurrencyController {
      * @return - A string array containing the currencies supported.
      */
     public String[] listCurrencies(String sessionKey) throws ServiceException, RemoteException, AuthenticationException {
-        
-        validateSessionKey(sessionKey);
-
-        Currency[] currencies = database.getAllCurrencies();
-
-        //If null was returned from the database there is no currencies, return an empty array
-        if(currencies == null)
-            return new String[0];
-
-        //Loop through all the currencies and build the currency codes array
-        String[] codes = new String[currencies.length];
-        for (int i = 0; i < currencies.length; i++)
-            codes[i] = currencies[i].getCode();
-
-        return codes;
+        return contoller.listCurrencies(sessionKey);
     }
 
 
@@ -119,18 +47,7 @@ public class CurrencyController {
      * @return - A string array containing all the conversion rates for the specified currency code
      */
     public String[] conversionsFor(String sessionKey, String currencyCode) throws ServiceException, RemoteException, AuthenticationException {
-        
-        validateSessionKey(sessionKey);
-
-        //Get the currency from the database
-        Currency currency = database.getCurrency(currencyCode);
-
-        //If the currency does not exist return a null array
-        if(currency == null)
-            return null;
-
-        //Get all the rates for the specified currency
-        return currency.getRates();
+        return contoller.conversionsFor(sessionKey, currencyCode);
     }
 
 
@@ -145,11 +62,7 @@ public class CurrencyController {
      * @return - TRUE if the rate was successfully added to the currency, FALSE otherwise.
      */
     public boolean addRate(String sessionKey, String fromCurrencyCode, String toCurrencyCode, double conversionRate) throws ServiceException, RemoteException, AuthenticationException {
-        
-        validateSessionKey(sessionKey);
-
-        //Call the database to add the rate
-        return database.addRate(fromCurrencyCode, toCurrencyCode, conversionRate);
+        return contoller.addRate(sessionKey, fromCurrencyCode, toCurrencyCode, conversionRate);
     }
 
 
@@ -164,11 +77,7 @@ public class CurrencyController {
      * @return - TRUE if the rate was successfully updated for the currency, FALSE otherwise.
      */
     public boolean updateRate(String sessionKey, String fromCurrencyCode, String toCurrencyCode, double rate) throws ServiceException, RemoteException, AuthenticationException {
-        
-        validateSessionKey(sessionKey);
-
-        //Call the database to add the rate
-        return database.updateRate(fromCurrencyCode, toCurrencyCode, rate);
+        return contoller.updateRate(sessionKey, fromCurrencyCode, toCurrencyCode, rate);
     }
 
 
@@ -182,24 +91,18 @@ public class CurrencyController {
      * @return - TRUE if the rate was successfully removed from the currency, FALSE otherwise.
      */
     public boolean removeRate(String sessionKey, String fromCurrencyCode, String toCurrencyCode) throws ServiceException, RemoteException, AuthenticationException {
-        
-        validateSessionKey(sessionKey);
-
-        //Call the database to add the rate
-        return database.removeRate(fromCurrencyCode, toCurrencyCode);
+        return contoller.removeRate(sessionKey, fromCurrencyCode, toCurrencyCode);
     }
 
 
-
-
-
-    private void validateSessionKey(String sessionKey) throws ServiceException, RemoteException, AuthenticationException {
-
-        AuthorisationService service = new AuthorisationServiceLocator();
-        Authorisation serviceInterface = service.getAuthorisation();
-        
-        //If the authorisation fails, throw a Authenication exception
-        if(!serviceInterface.authorise(sessionKey))
-            throw new AuthenticationException("The session key is invalid.");
+    /**
+     * Gets a list of all known conversion rates formatted as:
+     * AUD-USD:0.73
+     * 
+     * @return - An array containing the list of all known conversion
+     *           rates in the specified format.
+     */
+    public String[] listRates() throws ServiceException, RemoteException, AuthenticationException {
+        return contoller.listRates();
     }
 }
