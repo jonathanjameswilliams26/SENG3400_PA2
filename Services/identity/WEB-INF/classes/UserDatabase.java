@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
 
-public class IdentityLogic {
+public class UserDatabase {
 
     //CONSTANTS
     private static final String INVALID_REQUEST = "INVALID";
@@ -21,7 +21,7 @@ public class IdentityLogic {
     /**
      * Default Constructor, inits the HashMap of authenticated users to the default.
      */
-    public IdentityLogic() {
+    public UserDatabase() {
         users.put("hayden", "1234");
         users.put("josh", "4321");
     }

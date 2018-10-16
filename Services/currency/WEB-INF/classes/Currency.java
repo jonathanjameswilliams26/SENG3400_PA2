@@ -1,7 +1,8 @@
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Currency {
+public class Currency implements Serializable {
     private String code;
     private HashMap<String, Double> rates;
     private boolean isTradeable;

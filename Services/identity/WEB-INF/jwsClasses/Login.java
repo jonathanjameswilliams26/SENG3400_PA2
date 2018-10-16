@@ -1,6 +1,6 @@
 public class Login {
 
-    private static IdentityLogic logic = new IdentityLogic();
+    private static UserDatabase database = new UserDatabase();
 
     /**
      * The endpoint which logs a user into the application.
@@ -11,8 +11,9 @@ public class Login {
      *         username or password is incorrect "INVALID" is returned.
      */
     public String login(String username, String password) {
-        return logic.login(username, password);
+        return database.login(username, password);
     }
+
 
     /**
      * The endpoint which logs a user out of the application.
@@ -22,6 +23,6 @@ public class Login {
      *         username or password is incorrect "INVALID" is returned.
      */
     public boolean logout(String key) {
-        return logic.logout(key);
+        return database.logout(key);
     }
 }

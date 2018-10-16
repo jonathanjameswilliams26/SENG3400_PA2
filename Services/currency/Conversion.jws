@@ -1,6 +1,6 @@
 public class Conversion {
 
-    private static CurrencyController contoller = new CurrencyController();
+    private static CurrencyDatabaseInterface database = new CurrencyDatabaseInterface();
 
     /**
      * Lists all known conversion rates formatted as:
@@ -10,7 +10,7 @@ public class Conversion {
      *           rates in the specified format.
      */
     public String[] listRates() {
-        return contoller.listRates();
+        return database.listRates();
     }
 
     /**
@@ -22,7 +22,7 @@ public class Conversion {
      *           negative double if the pair does not exist.
      */
     public double rateOf(String fromCurrencyCode, String toCurrencyCode) {
-        return contoller.rateOf(fromCurrencyCode, toCurrencyCode);
+        return database.rateOf(fromCurrencyCode, toCurrencyCode);
     }
 
     /**
@@ -35,6 +35,6 @@ public class Conversion {
      *           Negative is returned if the currency pair does not exist.
      */
     public double convert(String fromCurrencyCode, String toCurrencyCode, double amount) {
-        return contoller.convert(fromCurrencyCode, toCurrencyCode, amount);
+        return database.convert(fromCurrencyCode, toCurrencyCode, amount);
     }
 }

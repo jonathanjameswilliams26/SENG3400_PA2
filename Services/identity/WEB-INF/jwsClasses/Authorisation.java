@@ -1,6 +1,6 @@
 public class Authorisation {
 
-    private static IdentityLogic logic = new IdentityLogic();
+    private static UserDatabase database = new UserDatabase();
 
     /**
      * The endpoint which authorises a users session key to determine if
@@ -10,6 +10,6 @@ public class Authorisation {
      * @return - TRUE if the session key is valid. FALSE otherwise
      */
     public boolean authorise(String key) {
-        return logic.authorise(key);
+        return database.authorise(key);
     }
 }

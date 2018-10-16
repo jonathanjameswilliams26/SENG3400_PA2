@@ -3,7 +3,7 @@ import javax.xml.rpc.ServiceException;
 import javax.security.sasl.AuthenticationException;
 public class Admin {
 
-    private static CurrencyController contoller = new CurrencyController();
+    private static CurrencyDatabaseInterface database = new CurrencyDatabaseInterface();
 
     /**
      * Adds a new currency to be converted by the Currency Service.
@@ -13,7 +13,7 @@ public class Admin {
      * @return - TRUE if the currency was successfully added, FALSE otherwise.
      */
     public boolean addCurrency(String sessionKey, String currencyCode) throws ServiceException, RemoteException, AuthenticationException {
-        return contoller.addCurrency(sessionKey, currencyCode);
+        return database.addCurrency(sessionKey, currencyCode);
     }
 
     /**
@@ -24,7 +24,7 @@ public class Admin {
      * @return - TRUE if the currency was successfully removed, FALSE otherwise.
      */
     public boolean removeCurrency(String sessionKey, String currencyCode) throws ServiceException, RemoteException, AuthenticationException {
-        return contoller.removeCurrency(sessionKey, currencyCode);
+        return database.removeCurrency(sessionKey, currencyCode);
     }
 
     /**
@@ -34,7 +34,7 @@ public class Admin {
      * @return - A string array containing the currencies supported.
      */
     public String[] listCurrencies(String sessionKey) throws ServiceException, RemoteException, AuthenticationException {
-        return contoller.listCurrencies(sessionKey);
+        return database.listCurrencies(sessionKey);
     }
 
 
@@ -47,7 +47,7 @@ public class Admin {
      * @return - A string array containing all the conversion rates for the specified currency code
      */
     public String[] conversionsFor(String sessionKey, String currencyCode) throws ServiceException, RemoteException, AuthenticationException {
-        return contoller.conversionsFor(sessionKey, currencyCode);
+        return database.conversionsFor(sessionKey, currencyCode);
     }
 
 
@@ -62,7 +62,7 @@ public class Admin {
      * @return - TRUE if the rate was successfully added to the currency, FALSE otherwise.
      */
     public boolean addRate(String sessionKey, String fromCurrencyCode, String toCurrencyCode, double conversionRate) throws ServiceException, RemoteException, AuthenticationException {
-        return contoller.addRate(sessionKey, fromCurrencyCode, toCurrencyCode, conversionRate);
+        return database.addRate(sessionKey, fromCurrencyCode, toCurrencyCode, conversionRate);
     }
 
 
@@ -77,7 +77,7 @@ public class Admin {
      * @return - TRUE if the rate was successfully updated for the currency, FALSE otherwise.
      */
     public boolean updateRate(String sessionKey, String fromCurrencyCode, String toCurrencyCode, double rate) throws ServiceException, RemoteException, AuthenticationException {
-        return contoller.updateRate(sessionKey, fromCurrencyCode, toCurrencyCode, rate);
+        return database.updateRate(sessionKey, fromCurrencyCode, toCurrencyCode, rate);
     }
 
 
@@ -91,7 +91,7 @@ public class Admin {
      * @return - TRUE if the rate was successfully removed from the currency, FALSE otherwise.
      */
     public boolean removeRate(String sessionKey, String fromCurrencyCode, String toCurrencyCode) throws ServiceException, RemoteException, AuthenticationException {
-        return contoller.removeRate(sessionKey, fromCurrencyCode, toCurrencyCode);
+        return database.removeRate(sessionKey, fromCurrencyCode, toCurrencyCode);
     }
 
 
@@ -103,6 +103,6 @@ public class Admin {
      *           rates in the specified format.
      */
     public String[] listRates() throws ServiceException, RemoteException, AuthenticationException {
-        return contoller.listRates();
+        return database.listRates();
     }
 }

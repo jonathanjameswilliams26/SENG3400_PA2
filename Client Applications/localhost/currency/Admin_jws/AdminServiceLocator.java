@@ -1,59 +1,59 @@
 /**
- * AuthorisationServiceLocator.java
+ * AdminServiceLocator.java
  *
  * This file was auto-generated from WSDL
  * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
  */
 
-package localhost.identity.Authorisation_jws;
+package localhost.currency.Admin_jws;
 
-public class AuthorisationServiceLocator extends org.apache.axis.client.Service implements localhost.identity.Authorisation_jws.AuthorisationService {
+public class AdminServiceLocator extends org.apache.axis.client.Service implements localhost.currency.Admin_jws.AdminService {
 
-    public AuthorisationServiceLocator() {
+    public AdminServiceLocator() {
     }
 
 
-    public AuthorisationServiceLocator(org.apache.axis.EngineConfiguration config) {
+    public AdminServiceLocator(org.apache.axis.EngineConfiguration config) {
         super(config);
     }
 
-    public AuthorisationServiceLocator(java.lang.String wsdlLoc, javax.xml.namespace.QName sName) throws javax.xml.rpc.ServiceException {
+    public AdminServiceLocator(java.lang.String wsdlLoc, javax.xml.namespace.QName sName) throws javax.xml.rpc.ServiceException {
         super(wsdlLoc, sName);
     }
 
-    // Use to get a proxy class for Authorisation
-    private java.lang.String Authorisation_address = "http://localhost:8080/identity/Authorisation.jws";
+    // Use to get a proxy class for Admin
+    private java.lang.String Admin_address = "http://localhost:8080/currency/Admin.jws";
 
-    public java.lang.String getAuthorisationAddress() {
-        return Authorisation_address;
+    public java.lang.String getAdminAddress() {
+        return Admin_address;
     }
 
     // The WSDD service name defaults to the port name.
-    private java.lang.String AuthorisationWSDDServiceName = "Authorisation";
+    private java.lang.String AdminWSDDServiceName = "Admin";
 
-    public java.lang.String getAuthorisationWSDDServiceName() {
-        return AuthorisationWSDDServiceName;
+    public java.lang.String getAdminWSDDServiceName() {
+        return AdminWSDDServiceName;
     }
 
-    public void setAuthorisationWSDDServiceName(java.lang.String name) {
-        AuthorisationWSDDServiceName = name;
+    public void setAdminWSDDServiceName(java.lang.String name) {
+        AdminWSDDServiceName = name;
     }
 
-    public localhost.identity.Authorisation_jws.Authorisation getAuthorisation() throws javax.xml.rpc.ServiceException {
+    public localhost.currency.Admin_jws.Admin getAdmin() throws javax.xml.rpc.ServiceException {
        java.net.URL endpoint;
         try {
-            endpoint = new java.net.URL(Authorisation_address);
+            endpoint = new java.net.URL(Admin_address);
         }
         catch (java.net.MalformedURLException e) {
             throw new javax.xml.rpc.ServiceException(e);
         }
-        return getAuthorisation(endpoint);
+        return getAdmin(endpoint);
     }
 
-    public localhost.identity.Authorisation_jws.Authorisation getAuthorisation(java.net.URL portAddress) throws javax.xml.rpc.ServiceException {
+    public localhost.currency.Admin_jws.Admin getAdmin(java.net.URL portAddress) throws javax.xml.rpc.ServiceException {
         try {
-            localhost.identity.Authorisation_jws.AuthorisationSoapBindingStub _stub = new localhost.identity.Authorisation_jws.AuthorisationSoapBindingStub(portAddress, this);
-            _stub.setPortName(getAuthorisationWSDDServiceName());
+            localhost.currency.Admin_jws.AdminSoapBindingStub _stub = new localhost.currency.Admin_jws.AdminSoapBindingStub(portAddress, this);
+            _stub.setPortName(getAdminWSDDServiceName());
             return _stub;
         }
         catch (org.apache.axis.AxisFault e) {
@@ -61,8 +61,8 @@ public class AuthorisationServiceLocator extends org.apache.axis.client.Service 
         }
     }
 
-    public void setAuthorisationEndpointAddress(java.lang.String address) {
-        Authorisation_address = address;
+    public void setAdminEndpointAddress(java.lang.String address) {
+        Admin_address = address;
     }
 
     /**
@@ -72,9 +72,9 @@ public class AuthorisationServiceLocator extends org.apache.axis.client.Service 
      */
     public java.rmi.Remote getPort(Class serviceEndpointInterface) throws javax.xml.rpc.ServiceException {
         try {
-            if (localhost.identity.Authorisation_jws.Authorisation.class.isAssignableFrom(serviceEndpointInterface)) {
-                localhost.identity.Authorisation_jws.AuthorisationSoapBindingStub _stub = new localhost.identity.Authorisation_jws.AuthorisationSoapBindingStub(new java.net.URL(Authorisation_address), this);
-                _stub.setPortName(getAuthorisationWSDDServiceName());
+            if (localhost.currency.Admin_jws.Admin.class.isAssignableFrom(serviceEndpointInterface)) {
+                localhost.currency.Admin_jws.AdminSoapBindingStub _stub = new localhost.currency.Admin_jws.AdminSoapBindingStub(new java.net.URL(Admin_address), this);
+                _stub.setPortName(getAdminWSDDServiceName());
                 return _stub;
             }
         }
@@ -94,8 +94,8 @@ public class AuthorisationServiceLocator extends org.apache.axis.client.Service 
             return getPort(serviceEndpointInterface);
         }
         java.lang.String inputPortName = portName.getLocalPart();
-        if ("Authorisation".equals(inputPortName)) {
-            return getAuthorisation();
+        if ("Admin".equals(inputPortName)) {
+            return getAdmin();
         }
         else  {
             java.rmi.Remote _stub = getPort(serviceEndpointInterface);
@@ -105,7 +105,7 @@ public class AuthorisationServiceLocator extends org.apache.axis.client.Service 
     }
 
     public javax.xml.namespace.QName getServiceName() {
-        return new javax.xml.namespace.QName("http://localhost:8080/identity/Authorisation.jws", "AuthorisationService");
+        return new javax.xml.namespace.QName("http://localhost:8080/currency/Admin.jws", "AdminService");
     }
 
     private java.util.HashSet ports = null;
@@ -113,7 +113,7 @@ public class AuthorisationServiceLocator extends org.apache.axis.client.Service 
     public java.util.Iterator getPorts() {
         if (ports == null) {
             ports = new java.util.HashSet();
-            ports.add(new javax.xml.namespace.QName("http://localhost:8080/identity/Authorisation.jws", "Authorisation"));
+            ports.add(new javax.xml.namespace.QName("http://localhost:8080/currency/Admin.jws", "Admin"));
         }
         return ports.iterator();
     }
@@ -123,8 +123,8 @@ public class AuthorisationServiceLocator extends org.apache.axis.client.Service 
     */
     public void setEndpointAddress(java.lang.String portName, java.lang.String address) throws javax.xml.rpc.ServiceException {
         
-if ("Authorisation".equals(portName)) {
-            setAuthorisationEndpointAddress(address);
+if ("Admin".equals(portName)) {
+            setAdminEndpointAddress(address);
         }
         else 
 { // Unknown Port Name
