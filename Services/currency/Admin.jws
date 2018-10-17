@@ -12,8 +12,8 @@ public class Admin {
      * @param - currencyCode - The currency code to add to the service.
      * @return - TRUE if the currency was successfully added, FALSE otherwise.
      */
-    public boolean addCurrency(String sessionKey, String currencyCode) throws ServiceException, RemoteException, AuthenticationException {
-        return database.addCurrency(sessionKey, currencyCode);
+    public boolean addCurrency(String sessionKey, String currencyCode) throws AuthenticationException {
+            return database.addCurrency(sessionKey, currencyCode);
     }
 
     /**
@@ -23,7 +23,7 @@ public class Admin {
      * @param - currencyCode - The currency code to remove to the service.
      * @return - TRUE if the currency was successfully removed, FALSE otherwise.
      */
-    public boolean removeCurrency(String sessionKey, String currencyCode) throws ServiceException, RemoteException, AuthenticationException {
+    public boolean removeCurrency(String sessionKey, String currencyCode) throws AuthenticationException {
         return database.removeCurrency(sessionKey, currencyCode);
     }
 
@@ -33,7 +33,7 @@ public class Admin {
      * @param - sessionKey - The users session key.
      * @return - A string array containing the currencies supported.
      */
-    public String[] listCurrencies(String sessionKey) throws ServiceException, RemoteException, AuthenticationException {
+    public String[] listCurrencies(String sessionKey) throws AuthenticationException {
         return database.listCurrencies(sessionKey);
     }
 
@@ -46,7 +46,7 @@ public class Admin {
      * @param - currencyCode - The currency code to retrieve all rates for
      * @return - A string array containing all the conversion rates for the specified currency code
      */
-    public String[] conversionsFor(String sessionKey, String currencyCode) throws ServiceException, RemoteException, AuthenticationException {
+    public String[] conversionsFor(String sessionKey, String currencyCode) throws AuthenticationException {
         return database.conversionsFor(sessionKey, currencyCode);
     }
 
@@ -61,7 +61,7 @@ public class Admin {
      * @param - conversionRate - The rate at which the two currencies are converted.
      * @return - TRUE if the rate was successfully added to the currency, FALSE otherwise.
      */
-    public boolean addRate(String sessionKey, String fromCurrencyCode, String toCurrencyCode, double conversionRate) throws ServiceException, RemoteException, AuthenticationException {
+    public boolean addRate(String sessionKey, String fromCurrencyCode, String toCurrencyCode, double conversionRate) throws AuthenticationException {
         return database.addRate(sessionKey, fromCurrencyCode, toCurrencyCode, conversionRate);
     }
 
@@ -76,7 +76,7 @@ public class Admin {
      * @param - rate - The new rate at which the two currencies are converted.
      * @return - TRUE if the rate was successfully updated for the currency, FALSE otherwise.
      */
-    public boolean updateRate(String sessionKey, String fromCurrencyCode, String toCurrencyCode, double rate) throws ServiceException, RemoteException, AuthenticationException {
+    public boolean updateRate(String sessionKey, String fromCurrencyCode, String toCurrencyCode, double rate) throws AuthenticationException {
         return database.updateRate(sessionKey, fromCurrencyCode, toCurrencyCode, rate);
     }
 
@@ -90,7 +90,7 @@ public class Admin {
      * @param - toCurrencyCode - The currency code the conversion is to.
      * @return - TRUE if the rate was successfully removed from the currency, FALSE otherwise.
      */
-    public boolean removeRate(String sessionKey, String fromCurrencyCode, String toCurrencyCode) throws ServiceException, RemoteException, AuthenticationException {
+    public boolean removeRate(String sessionKey, String fromCurrencyCode, String toCurrencyCode) throws AuthenticationException {
         return database.removeRate(sessionKey, fromCurrencyCode, toCurrencyCode);
     }
 
@@ -102,7 +102,7 @@ public class Admin {
      * @return - An array containing the list of all known conversion
      *           rates in the specified format.
      */
-    public String[] listRates() throws ServiceException, RemoteException, AuthenticationException {
-        return database.listRates();
+    public String[] listRates(String sessionKey) throws AuthenticationException {
+        return database.listRates(sessionKey);
     }
 }

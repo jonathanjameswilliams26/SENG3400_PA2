@@ -96,11 +96,6 @@ public class UserDatabase {
 
             isComplete = true;
         }
-
-        System.out.println("Users List:");
-        System.out.println(Arrays.asList(users));
-        System.out.println("Sessions List:");
-        System.out.println(Arrays.asList(sessions));
         return key;
     }
 
@@ -117,18 +112,8 @@ public class UserDatabase {
         if(sessions.containsKey(key))
         {
             sessions.remove(key);
-            System.out.println("Users List:");
-            System.out.println(Arrays.asList(users));
-            System.out.println("Sessions List:");
-            System.out.println(Arrays.asList(sessions));
             return true;
         }
-
-        System.out.println("Users List:");
-        System.out.println(Arrays.asList(users));
-        System.out.println("Sessions List:");
-        System.out.println(Arrays.asList(sessions));
-        
 
         //Otherwise, the session key does not exist, return false.
         return false;

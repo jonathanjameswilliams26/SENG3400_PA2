@@ -49,19 +49,21 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
    </wsdl:message>
 
-   <wsdl:message name="listRatesResponse">
-
-      <wsdl:part name="listRatesReturn" type="impl:ArrayOf_xsd_string"/>
-
-   </wsdl:message>
-
    <wsdl:message name="listCurrenciesRequest">
 
       <wsdl:part name="sessionKey" type="xsd:string"/>
 
    </wsdl:message>
 
+   <wsdl:message name="listRatesResponse">
+
+      <wsdl:part name="listRatesReturn" type="impl:ArrayOf_xsd_string"/>
+
+   </wsdl:message>
+
    <wsdl:message name="listRatesRequest">
+
+      <wsdl:part name="sessionKey" type="xsd:string"/>
 
    </wsdl:message>
 
@@ -133,14 +135,6 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
    <wsdl:portType name="Admin">
 
-      <wsdl:operation name="listRates">
-
-         <wsdl:input message="impl:listRatesRequest" name="listRatesRequest"/>
-
-         <wsdl:output message="impl:listRatesResponse" name="listRatesResponse"/>
-
-      </wsdl:operation>
-
       <wsdl:operation name="removeCurrency" parameterOrder="sessionKey currencyCode">
 
          <wsdl:input message="impl:removeCurrencyRequest" name="removeCurrencyRequest"/>
@@ -154,14 +148,6 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
          <wsdl:input message="impl:conversionsForRequest" name="conversionsForRequest"/>
 
          <wsdl:output message="impl:conversionsForResponse" name="conversionsForResponse"/>
-
-      </wsdl:operation>
-
-      <wsdl:operation name="addCurrency" parameterOrder="sessionKey currencyCode">
-
-         <wsdl:input message="impl:addCurrencyRequest" name="addCurrencyRequest"/>
-
-         <wsdl:output message="impl:addCurrencyResponse" name="addCurrencyResponse"/>
 
       </wsdl:operation>
 
@@ -181,11 +167,11 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
       </wsdl:operation>
 
-      <wsdl:operation name="updateRate" parameterOrder="sessionKey fromCurrencyCode toCurrencyCode rate">
+      <wsdl:operation name="addCurrency" parameterOrder="sessionKey currencyCode">
 
-         <wsdl:input message="impl:updateRateRequest" name="updateRateRequest"/>
+         <wsdl:input message="impl:addCurrencyRequest" name="addCurrencyRequest"/>
 
-         <wsdl:output message="impl:updateRateResponse" name="updateRateResponse"/>
+         <wsdl:output message="impl:addCurrencyResponse" name="addCurrencyResponse"/>
 
       </wsdl:operation>
 
@@ -197,29 +183,27 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
       </wsdl:operation>
 
+      <wsdl:operation name="listRates" parameterOrder="sessionKey">
+
+         <wsdl:input message="impl:listRatesRequest" name="listRatesRequest"/>
+
+         <wsdl:output message="impl:listRatesResponse" name="listRatesResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="updateRate" parameterOrder="sessionKey fromCurrencyCode toCurrencyCode rate">
+
+         <wsdl:input message="impl:updateRateRequest" name="updateRateRequest"/>
+
+         <wsdl:output message="impl:updateRateResponse" name="updateRateResponse"/>
+
+      </wsdl:operation>
+
    </wsdl:portType>
 
    <wsdl:binding name="AdminSoapBinding" type="impl:Admin">
 
       <wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
-
-      <wsdl:operation name="listRates">
-
-         <wsdlsoap:operation soapAction=""/>
-
-         <wsdl:input name="listRatesRequest">
-
-            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://DefaultNamespace" use="encoded"/>
-
-         </wsdl:input>
-
-         <wsdl:output name="listRatesResponse">
-
-            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://localhost:8080/currency/Admin.jws" use="encoded"/>
-
-         </wsdl:output>
-
-      </wsdl:operation>
 
       <wsdl:operation name="removeCurrency">
 
@@ -250,24 +234,6 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
          </wsdl:input>
 
          <wsdl:output name="conversionsForResponse">
-
-            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://localhost:8080/currency/Admin.jws" use="encoded"/>
-
-         </wsdl:output>
-
-      </wsdl:operation>
-
-      <wsdl:operation name="addCurrency">
-
-         <wsdlsoap:operation soapAction=""/>
-
-         <wsdl:input name="addCurrencyRequest">
-
-            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://DefaultNamespace" use="encoded"/>
-
-         </wsdl:input>
-
-         <wsdl:output name="addCurrencyResponse">
 
             <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://localhost:8080/currency/Admin.jws" use="encoded"/>
 
@@ -311,17 +277,17 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
       </wsdl:operation>
 
-      <wsdl:operation name="updateRate">
+      <wsdl:operation name="addCurrency">
 
          <wsdlsoap:operation soapAction=""/>
 
-         <wsdl:input name="updateRateRequest">
+         <wsdl:input name="addCurrencyRequest">
 
             <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://DefaultNamespace" use="encoded"/>
 
          </wsdl:input>
 
-         <wsdl:output name="updateRateResponse">
+         <wsdl:output name="addCurrencyResponse">
 
             <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://localhost:8080/currency/Admin.jws" use="encoded"/>
 
@@ -340,6 +306,42 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
          </wsdl:input>
 
          <wsdl:output name="removeRateResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://localhost:8080/currency/Admin.jws" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="listRates">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="listRatesRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://DefaultNamespace" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="listRatesResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://localhost:8080/currency/Admin.jws" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="updateRate">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="updateRateRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://DefaultNamespace" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="updateRateResponse">
 
             <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://localhost:8080/currency/Admin.jws" use="encoded"/>
 

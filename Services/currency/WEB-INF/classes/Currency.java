@@ -108,16 +108,20 @@ public class Currency implements Serializable {
     public String[] getRates() {
 
         if(!isTradeable)
-            return null;
+        {
+            System.out.println("ERROR:" + code + " does not contain any rates.");
+            return new String[0];
+        }
+            
         
         String[] formattedRates = new String[rates.size()];
 
         //Loop through all the rates and format the string accordingly
-        //Makes the rates to 2 decimal places for readability
+        //Makes the rates to 4 decimal places for readability
         int i = 0;
         for (Map.Entry<String, Double> entry : rates.entrySet())
         {
-            formattedRates[i] = code + "-" + entry.getKey() + ":" + String.format("%.2f", entry.getValue());
+            formattedRates[i] = code + "-" + entry.getKey() + ":" + String.format("%.4f", entry.getValue());
             i++;
         }
 

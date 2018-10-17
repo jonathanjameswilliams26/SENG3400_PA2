@@ -8,6 +8,6 @@
 package localhost.identity.Login_jws;
 
 public interface Login extends java.rmi.Remote {
-    public boolean logout(java.lang.String key) throws java.rmi.RemoteException;
     public java.lang.String login(java.lang.String username, java.lang.String password) throws java.rmi.RemoteException;
+    public boolean logout(java.lang.String key) throws java.rmi.RemoteException;
 }
