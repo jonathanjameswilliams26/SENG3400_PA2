@@ -119,7 +119,7 @@ public class AdminClient extends Client
     }
 
 
-    public void login() throws RemoteException, AuthenticationException {
+    private void login() throws RemoteException, AuthenticationException {
 
         int attempts = 0;
         boolean isLoggedIn = false;
