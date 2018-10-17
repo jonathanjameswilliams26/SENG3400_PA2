@@ -1,204 +1,178 @@
-import java.util.Scanner;
+import java.rmi.RemoteException;
+import java.util.NoSuchElementException;
+import javax.management.ServiceNotFoundException;
+import javax.xml.rpc.ServiceException;
 import localhost.currency.Conversion_jws.*;
 
-public class CurrencyClient {
+public class CurrencyClient extends Client {
+
+    private ConversionService service;
+    private Conversion serviceInterface;
 
     public static void main(String[] args) {
+        //Run the application
+        try
+        {
+            Client client = new CurrencyClient();
+            client.run();
+        }
+        //Catch any exceptions thrown throughout the application and return the error message
+        catch(Exception e)
+        {
+            System.out.println(e.getMessage());
+        }
+        //Exit the application
+        finally
+        {
+            System.out.println("Exiting application.");
+            System.exit(0);
+        }
+    }
 
-        //Initalise variables
-        Scanner input = new Scanner(System.in);
-        boolean exit = false;
-        ConversionService service = null;
-        Conversion serviceInterface = null;
+
+    public CurrencyClient() throws NoSuchElementException, ServiceNotFoundException {
+        in = System.console();
+        input = null; 
+        command = null;
+        exit = false;
+
+        //If cannot obtain a console to receive the user input exit the application
+        if(in == null)
+            throw new NoSuchElementException("ERROR: The Console does not exist, the console is required to take user input.");
+
+        //Initalise the conversion service
         try
         {
             service = new ConversionServiceLocator();
             serviceInterface = service.getConversion();
         }
-        catch (Exception e)
+        catch (ServiceException e)
         {
-            System.out.println("ERROR: An error occurred while establishing a connection with the service.");
-            exit = true;
+            throw new ServiceNotFoundException("ERROR: An error occurred trying to initalise the Conversion Service. The service was not found.");
         }
+
+        //Initialise the message which will be displayed to the user
+        promptMessage = "\nPlease type in one of the following options:\n"
+                        + "1. convert <fromCurrency> <toCurrency> <amount>\n"
+                        + "2. rateOf <fromCurrency> <toCurrency>\n"
+                        + "3. listRates\n"
+                        + "4. exit\n"
+                        + "Enter Input: ";
+    }
+
+    protected void executeCommand() throws RemoteException {
         
-        //Run the program while the user has not exited the program
-        while(!exit)
+        //Tokenise the users input, split the input using the spaces
+        tokenise();
+
+        //if the command list is empty print an error and leave the method because there is no command to execute
+        if(command.isEmpty())
         {
-            //Output the prompt options to the user and capture the users input
-            String userInput = getUserInput(input);
-
-            //Execute listRates
-            if(userInput.equals("listRates"))
-                listRates(serviceInterface);
-
-
-            //Exit the application
-            else if (userInput.equals("exit"))
-                exit = true;
-
-            //Otherwise, the input may be convert, rateOf or invalid.
-            else
-            {
-                //Split the input into token, split based on the use of spaces.
-                String[] tokens = tokeniseInput(userInput);
-
-                //Invalid input detected
-                if(tokens == null)
-                    System.out.println("Invalid input, please try again.");
-
-                //Execute rateOf
-                else if (tokens[0].equals("rateOf"))
-                    rateOf(serviceInterface, tokens);
-
-                //Execute convert
-                else if (tokens[0].equals("convert"))
-                    convert(serviceInterface, tokens);
-
-                //Invalid input
-                else
-                    System.out.println("ERROR: Invalid input, please try again."); 
-            }      
+            System.out.println("ERROR: The command is empty. please try again.");
+            return;
         }
-        System.out.println("Exiting Program...");
+
+        String methodToExecute = command.get(0);
+
+        //Execute the command
+        switch (methodToExecute) 
+        {
+            case "convert":
+                convert();
+                break;
+
+            case "rateOf":
+                rateOf();
+                break;
+
+            case "listRates":
+                listRates();
+                break;
+            
+            case "exit":
+                exit();
+                break;
+
+            default:
+                System.out.println("ERROR: Invalid command, please try again.");
+                break;
+        }
     }
 
 
+    private void convert() throws RemoteException {
+        String networkError = "ERROR: A network error occurred while trying to execute convert(). Please confirm the service is available.";
 
-    private static String getUserInput(Scanner input) {
-        System.out.println("\nPlease type in one of the following options:");
-        System.out.println("1. convert <fromCurrency> <toCurrency> <amount>");
-        System.out.println("2. rateOf <fromCurrency> <toCurrency>");
-        System.out.println("3. listRates");
-        System.out.println("4. exit\n");
-        System.out.print("Enter Input: ");
-        return input.nextLine();
-    }
+        //Confirm there is 4 items in the command list, 1 = command, 2 = fromCurrency, 3 = toCurrency, 4 = amount
+        //If the command does not contain 4 items print an error message and leave the method because it was executed incorrectly
+        String commandErrorMSG = "ERROR: Cannot execute addCurrency command. You did not supply a <fromCurrency>, <toCurrency>, <amount>.";
+        if(!isCommandValid(4, commandErrorMSG))
+            return;
 
+        //Confirm the amount to convert is actually a double
+        double actualAmount = 0;
+        try 
+        {
+            actualAmount = Double.parseDouble(command.get(3));
+        } 
+        catch (Exception e) 
+        {
+            System.out.println("ERROR: Cannot execute convert command. <amount> is invalid, you must enter a number.");
+            return;
+        }
 
-    private static void listRates(Conversion serviceInterface) {
-
+        //Call the service to convert the amount
         try
         {
-            String[] rates = serviceInterface.listRates();
-
-            if(rates == null)
-            {
-                System.out.println("No currencies in the database.");
-                return; 
-            }
-
-            if(rates.length == 0)
-            {
-                System.out.println("No currency rates in the database.");
-                return;
-            }
-
-            //Loop through the rates and print them out
-            System.out.println("\nConversion Rates:");
-            System.out.println("--------------------------------------");
-            for (String rate : rates) 
-                System.out.println(rate);
-            System.out.println("--------------------------------------");
+            double convertedAmount = serviceInterface.convert(command.get(1), command.get(2), actualAmount);
+            boolean successful = convertedAmount != -1.0;
+            String successMSG = "$" + String.format("%.2f", convertedAmount) + " (including 1% fee)";
+            String errorMSG = "Could not convert from " + command.get(1).toUpperCase() + " to " + command.get(2).toUpperCase() + " because a conversion rate between the currencies does not exist, or an error occurred on the server";
+            printResult(successful, successMSG, errorMSG);
         }
-        catch (Exception e)
+        catch (RemoteException e)
         {
-            System.out.println("ERROR: An error occurred while trying to execute listRates from the web service.");
+            throw new RemoteException(networkError);
         }
     }
 
+    private void rateOf() throws RemoteException {
+        String networkError = "ERROR: A network error occurred while trying to execute rateOf(). Please confirm the service is available.";
 
+        //Confirm there is 4 items in the command list, 1 = command, 2 = fromCurrency, 3 = toCurrency
+        //If the command does not contain 3 items print an error message and leave the method because it was executed incorrectly
+        String commandErrorMSG = "ERROR: Cannot execute addCurrency command. You did not supply a <fromCurrency> or <toCurrency>.";
+        if(!isCommandValid(3, commandErrorMSG))
+            return;
 
-    private static void rateOf(Conversion serviceInterface, String[] tokens) {
+        //Call the service to get the rate of
         try
         {
-            //Confirm there is 3 tokens
-            if(tokens.length != 3)
-            {
-                System.out.println("ERROR: Cannot execute rateOf() because the input is invalid, please enter the correct input required.");
-                return;   
-            }
-            
-            //Execute the web service
-            double rate = serviceInterface.rateOf(tokens[1], tokens[2]);
-
-            if(rate == -1.0)
-                System.out.println("ERROR: Cannot execute rateOf(). The fromCurrency and toCurrency code pair does not exist in the database.");
-            
-            //Print out the rate results
-            else
-            {
-                System.out.println("\nRate Of " + tokens[1] + "-" + tokens[2] + ":");
-                System.out.println("--------------------------------------");
-                System.out.println(String.format("%.4f", rate));
-                System.out.println("--------------------------------------");
-            }
+            double rate = serviceInterface.rateOf(command.get(1), command.get(2));
+            boolean successful = rate != -1.0;
+            String successMSG = "Rate of " + command.get(1).toUpperCase() + "-" + command.get(2).toUpperCase() + " is: " + String.format("%.4f", rate);
+            String errorMSG = "The rate of " + command.get(1).toUpperCase() + "-" + command.get(2).toUpperCase() + " does not exist or an error occurred on the server.";
+            printResult(successful, successMSG, errorMSG);
         }
-        catch (Exception e)
+        catch (RemoteException e)
         {
-            System.out.println("ERROR: An error occurred while trying to execute rateOf from the web service.");
+            throw new RemoteException(networkError);
         }
     }
 
-    private static void convert(Conversion serviceInterface, String[] tokens) {
-        try
-        {
-            //Confirm there is 4 tokens
-            if(tokens.length != 4)
-            {
-                System.out.println("ERROR: Cannot execute convert() because the input is invalid, please enter the correct input required.");
-                return;   
-            }
-
-            //Convert the last token to a double
-            double amount = -1;
-            try
-            {
-                amount = Double.parseDouble(tokens[3]);
-            }
-            catch (NumberFormatException e)
-            {
-                System.out.println("ERROR: Cannot execute convert() because the input is invalid, the <amount> entered is not a double data type.");
-                return; 
-            }
-            
-            //Execute the web service
-            amount = serviceInterface.convert(tokens[1], tokens[2], amount);
-
-            if(amount == -1.0)
-                System.out.println("ERROR: Cannot execute convert(). The fromCurrency and toCurrency code pair does not exist in the database or the amount entered is less than or equal to 0.");
-            
-            //Print out the rate results
-            else
-            {
-                System.out.println("\nCurrency Conversion From " + tokens[1] + "-" + tokens[2] + ":");
-                System.out.println("--------------------------------------");
-                System.out.println(String.format("$%.2f", amount));
-                System.out.println("--------------------------------------");
-            }
-        }
-        catch (Exception e)
-        {
-            System.out.println("ERROR: An error occurred while trying to execute rateOf from the web service.");
-        }
-    }
-
-
-    private static String[] tokeniseInput(String userInput) {
+    private void listRates() throws RemoteException {
+        String networkError = "ERROR: A network error occurred while trying to execute removeCurrency(). Please confirm the service is available.";
+        String title = "List of All Conversion Rates";
+        String emptyMSG = "No conversion rates found. The database contains no conversion rates or an error occurred on the service.";
         
-        if(userInput == null)
-            return null;
-
-        //If the user input does not contain a space then the input is invalid
-        if(!userInput.contains(" "))
-            return null;
-
-        //Get the tokens from the input
-        String[] tokens = userInput.split(" ");
-
-        //There must be atleast 3 tokens to be a possible valid input since rateOf uses three tokens
-        if(tokens.length < 3)
-            return null;
-
-        return tokens;
+        //Call the service to list all the rates
+        try
+        {
+            printList(serviceInterface.listRates(), title, emptyMSG);
+        }
+        catch (RemoteException e)
+        {
+            throw new RemoteException(networkError);
+        }
     }
 }

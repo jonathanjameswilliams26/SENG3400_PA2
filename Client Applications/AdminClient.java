@@ -415,7 +415,7 @@ public class AdminClient extends Client
 
 
     private void listRates() throws AuthenticationException, RemoteException {
-        String networkError = "ERROR: A network error occurred while trying to execute removeCurrency(). Please confirm the service is available.";
+        String networkError = "ERROR: A network error occurred while trying to execute listRates(). Please confirm the service is available.";
         String title = "List of All Conversion Rates";
         String emptyMSG = "No conversion rates found. The database contains no conversion rates or an error occurred on the service.";
         
