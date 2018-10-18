@@ -6,9 +6,12 @@ import localhost.currency.Conversion_jws.*;
 
 public class CurrencyClient extends Client {
 
-    private ConversionService service;
-    private Conversion serviceInterface;
+    private ConversionService service;      //The conversion web service       
+    private Conversion serviceInterface;    //The service interface to invoke web service methods
 
+    /**
+     * Main Method
+     */
     public static void main(String[] args) {
         //Run the application
         try
@@ -30,6 +33,14 @@ public class CurrencyClient extends Client {
     }
 
 
+
+
+
+    /**
+     * Default Constructor
+     * @throws NoSuchElementException if a Console used to accept user input is unavailable
+     * @throws ServiceNotFoundException if and error occurs initalising the ConversionService
+     */
     public CurrencyClient() throws NoSuchElementException, ServiceNotFoundException {
         in = System.console();
         input = null; 
@@ -60,6 +71,13 @@ public class CurrencyClient extends Client {
                         + "Enter Input: ";
     }
 
+
+
+
+    /**
+     * Implementing the base class abstract method.
+     * Executes a command specified by the client from the main menu input.
+     */
     protected void executeCommand() throws RemoteException {
         
         //Tokenise the users input, split the input using the spaces
@@ -72,9 +90,8 @@ public class CurrencyClient extends Client {
             return;
         }
 
-        String methodToExecute = command.get(0);
-
         //Execute the command
+        String methodToExecute = command.get(0);
         switch (methodToExecute) 
         {
             case "convert":
@@ -100,6 +117,14 @@ public class CurrencyClient extends Client {
     }
 
 
+
+
+
+    /**
+     * Execute the convert command.
+     * Converts an amount from one currency to another using the conversion web service.
+     * @throws RemoteException if an error occurred while trying to execute the web service method.
+     */
     private void convert() throws RemoteException {
         String networkError = "ERROR: A network error occurred while trying to execute convert(). Please confirm the service is available.";
 
@@ -121,7 +146,7 @@ public class CurrencyClient extends Client {
             return;
         }
 
-        //Call the service to convert the amount
+        //Call the service to convert the amount and print the result
         try
         {
             double convertedAmount = serviceInterface.convert(command.get(1), command.get(2), actualAmount);
@@ -130,12 +155,23 @@ public class CurrencyClient extends Client {
             String errorMSG = "Could not convert from " + command.get(1).toUpperCase() + " to " + command.get(2).toUpperCase() + " because a conversion rate between the currencies does not exist, or an error occurred on the server";
             printResult(successful, successMSG, errorMSG);
         }
+
+        //Exception thrown if the web service fails to execute
         catch (RemoteException e)
         {
             throw new RemoteException(networkError);
         }
     }
 
+
+
+
+
+    /**
+     * Execute the rateOf command.
+     * Gets the conversion rate from one currency to another using the conversion web service.
+     * @throws RemoteException if an error occurred while trying to execute the web service method.
+     */
     private void rateOf() throws RemoteException {
         String networkError = "ERROR: A network error occurred while trying to execute rateOf(). Please confirm the service is available.";
 
@@ -145,7 +181,7 @@ public class CurrencyClient extends Client {
         if(!isCommandValid(3, commandErrorMSG))
             return;
 
-        //Call the service to get the rate of
+        //Call the service to get the rate of and print the result
         try
         {
             double rate = serviceInterface.rateOf(command.get(1), command.get(2));
@@ -160,6 +196,14 @@ public class CurrencyClient extends Client {
         }
     }
 
+
+
+
+
+    /**
+     * Lists the rates of all conversion rates the service offers.
+     * @throws RemoteException if an error occurred while trying to execute the web service method.
+     */
     private void listRates() throws RemoteException {
         String networkError = "ERROR: A network error occurred while trying to execute removeCurrency(). Please confirm the service is available.";
         String title = "List of All Conversion Rates";

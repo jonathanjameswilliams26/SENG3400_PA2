@@ -39,6 +39,15 @@ public class ConversionSoapBindingStub extends org.apache.axis.client.Stub imple
         _operations[0] = oper;
 
         oper = new org.apache.axis.description.OperationDesc();
+        oper.setName("listRates");
+        oper.setReturnType(new javax.xml.namespace.QName("http://localhost:8080/currency/Conversion.jws", "ArrayOf_xsd_string"));
+        oper.setReturnClass(java.lang.String[].class);
+        oper.setReturnQName(new javax.xml.namespace.QName("", "listRatesReturn"));
+        oper.setStyle(org.apache.axis.constants.Style.RPC);
+        oper.setUse(org.apache.axis.constants.Use.ENCODED);
+        _operations[1] = oper;
+
+        oper = new org.apache.axis.description.OperationDesc();
         oper.setName("rateOf");
         param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "fromCurrencyCode"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"), java.lang.String.class, false, false);
         oper.addParameter(param);
@@ -47,15 +56,6 @@ public class ConversionSoapBindingStub extends org.apache.axis.client.Stub imple
         oper.setReturnType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "double"));
         oper.setReturnClass(double.class);
         oper.setReturnQName(new javax.xml.namespace.QName("", "rateOfReturn"));
-        oper.setStyle(org.apache.axis.constants.Style.RPC);
-        oper.setUse(org.apache.axis.constants.Use.ENCODED);
-        _operations[1] = oper;
-
-        oper = new org.apache.axis.description.OperationDesc();
-        oper.setName("listRates");
-        oper.setReturnType(new javax.xml.namespace.QName("http://localhost:8080/currency/Conversion.jws", "ArrayOf_xsd_string"));
-        oper.setReturnClass(java.lang.String[].class);
-        oper.setReturnQName(new javax.xml.namespace.QName("", "listRatesReturn"));
         oper.setStyle(org.apache.axis.constants.Style.RPC);
         oper.setUse(org.apache.axis.constants.Use.ENCODED);
         _operations[2] = oper;
@@ -198,43 +198,12 @@ public class ConversionSoapBindingStub extends org.apache.axis.client.Stub imple
 }
     }
 
-    public double rateOf(java.lang.String fromCurrencyCode, java.lang.String toCurrencyCode) throws java.rmi.RemoteException {
-        if (super.cachedEndpoint == null) {
-            throw new org.apache.axis.NoEndPointException();
-        }
-        org.apache.axis.client.Call _call = createCall();
-        _call.setOperation(_operations[1]);
-        _call.setUseSOAPAction(true);
-        _call.setSOAPActionURI("");
-        _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);
-        _call.setOperationName(new javax.xml.namespace.QName("http://DefaultNamespace", "rateOf"));
-
-        setRequestHeaders(_call);
-        setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {fromCurrencyCode, toCurrencyCode});
-
-        if (_resp instanceof java.rmi.RemoteException) {
-            throw (java.rmi.RemoteException)_resp;
-        }
-        else {
-            extractAttachments(_call);
-            try {
-                return ((java.lang.Double) _resp).doubleValue();
-            } catch (java.lang.Exception _exception) {
-                return ((java.lang.Double) org.apache.axis.utils.JavaUtils.convert(_resp, double.class)).doubleValue();
-            }
-        }
-  } catch (org.apache.axis.AxisFault axisFaultException) {
-  throw axisFaultException;
-}
-    }
-
     public java.lang.String[] listRates() throws java.rmi.RemoteException {
         if (super.cachedEndpoint == null) {
             throw new org.apache.axis.NoEndPointException();
         }
         org.apache.axis.client.Call _call = createCall();
-        _call.setOperation(_operations[2]);
+        _call.setOperation(_operations[1]);
         _call.setUseSOAPAction(true);
         _call.setSOAPActionURI("");
         _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);
@@ -253,6 +222,37 @@ public class ConversionSoapBindingStub extends org.apache.axis.client.Stub imple
                 return (java.lang.String[]) _resp;
             } catch (java.lang.Exception _exception) {
                 return (java.lang.String[]) org.apache.axis.utils.JavaUtils.convert(_resp, java.lang.String[].class);
+            }
+        }
+  } catch (org.apache.axis.AxisFault axisFaultException) {
+  throw axisFaultException;
+}
+    }
+
+    public double rateOf(java.lang.String fromCurrencyCode, java.lang.String toCurrencyCode) throws java.rmi.RemoteException {
+        if (super.cachedEndpoint == null) {
+            throw new org.apache.axis.NoEndPointException();
+        }
+        org.apache.axis.client.Call _call = createCall();
+        _call.setOperation(_operations[2]);
+        _call.setUseSOAPAction(true);
+        _call.setSOAPActionURI("");
+        _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);
+        _call.setOperationName(new javax.xml.namespace.QName("http://DefaultNamespace", "rateOf"));
+
+        setRequestHeaders(_call);
+        setAttachments(_call);
+ try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {fromCurrencyCode, toCurrencyCode});
+
+        if (_resp instanceof java.rmi.RemoteException) {
+            throw (java.rmi.RemoteException)_resp;
+        }
+        else {
+            extractAttachments(_call);
+            try {
+                return ((java.lang.Double) _resp).doubleValue();
+            } catch (java.lang.Exception _exception) {
+                return ((java.lang.Double) org.apache.axis.utils.JavaUtils.convert(_resp, double.class)).doubleValue();
             }
         }
   } catch (org.apache.axis.AxisFault axisFaultException) {

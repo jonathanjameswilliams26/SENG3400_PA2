@@ -18,6 +18,7 @@ public class UserDatabase {
     //The list of currently active sessions / logged in users - <SessionKey, Username>
     private static HashMap<String, String> sessions = new HashMap<>();
 
+
     /**
      * Default Constructor, inits the HashMap of authenticated users to the default.
      */
@@ -39,11 +40,17 @@ public class UserDatabase {
         
         //Confirm the username exists
         if(!users.containsKey(username))
+        {
+            System.out.println("ERROR: The username does not exist.");
             return INVALID_REQUEST;
+        }
 
         //Confirm the password is correct for the username
         if(!password.equals(users.get(username)))
+        {
+            System.out.println("ERROR: The password is incorrect");
             return INVALID_REQUEST;
+        }
 
         //The username and password is valid, generate and set the session key
         return generateNewSessionKey(username);
@@ -61,6 +68,9 @@ public class UserDatabase {
      * @return - A random 5 character alpha numeric session key.
      */
     private String generateNewSessionKey(String username) {
+        
+        System.out.println("Generating session key.");
+        
         String key = "";
         boolean isComplete = false;
         while(!isComplete)
@@ -96,6 +106,7 @@ public class UserDatabase {
 
             isComplete = true;
         }
+        System.out.println("SUCCESS: User successfully logged in. Session key: " + key);
         return key;
     }
 
@@ -111,11 +122,12 @@ public class UserDatabase {
         //If the key exists then invalidate / remove the key from the Map
         if(sessions.containsKey(key))
         {
-            sessions.remove(key);
+            System.out.println("SUCCESS: Successfully logged out " + sessions.remove(key));
             return true;
         }
 
         //Otherwise, the session key does not exist, return false.
+        System.out.println("ERROR: Failed to log out user because session key does not exist.");
         return false;
     }
 
@@ -129,7 +141,12 @@ public class UserDatabase {
      */
     public boolean authorise(String key) {
         if(sessions.containsKey(key))
+        {
+            System.out.println("SUCCESS: User is authorised.");
             return true;
+        }
+
+        System.out.println("ERROR: The user is not authorised, session key does not exist.");
         return false;
     }
 }

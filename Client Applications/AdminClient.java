@@ -1,8 +1,6 @@
 import localhost.identity.Login_jws.*;
 import localhost.currency.Admin_jws.*;
 import java.io.Console;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,13 +12,17 @@ import org.apache.axis.AxisFault;
 
 public class AdminClient extends Client
 {
-    private String username;
-    private String sessionKey;
-    private LoginService loginService;
-    private Login loginInterface;
-    private AdminService adminService;
-    private Admin adminInterface;
+    private String username;            //The clients username entered via the command line as an argument
+    private String sessionKey;          //The session key provided to the user after they successfully login
+    private LoginService loginService;  //The Login web service
+    private Login loginInterface;       //The Login web service interface used to invoke service methods
+    private AdminService adminService;  //The Admin web service
+    private Admin adminInterface;       //The Admin web service interface used to invoke service methods
 
+
+    /**
+     * Main Method
+     */
     public static void main(String[] args) {
         //If the user did not provide a command line argument exit the application
         if(args.length != 1)
@@ -49,6 +51,16 @@ public class AdminClient extends Client
     }
 
 
+
+
+
+    /**
+     * Default constuctor
+     * @param username - The username entered by the client
+     * @throws IllegalArgumentException if the username is empty
+     * @throws NoSuchElementException if a Console used to accept user input is unavailable
+     * @throws ServiceNotFoundException if and error occurs initalising the LoginService or AdminService
+     */
     public AdminClient(String username) throws IllegalArgumentException, NoSuchElementException, ServiceNotFoundException {
         
         //Confirm the username is not just whitespace
@@ -101,6 +113,11 @@ public class AdminClient extends Client
 
 
 
+    /**
+     * Run the client application until requested to exit
+     * @throws RemoteException if an exception occurs while attempting to use a web service
+     * @throws AuthenticationException if attempting to use a web service which requries authentication but authentication fails
+     */
     @Override
     public void run() throws RemoteException, AuthenticationException {
 
@@ -119,6 +136,14 @@ public class AdminClient extends Client
     }
 
 
+
+
+
+    /**
+     * Logs the user into the application
+     * @throws RemoteException if an exception occurs while attempting to use a web service
+     * @throws AuthenticationException if the user unsuccessfully logs in 3 times.
+     */
     private void login() throws RemoteException, AuthenticationException {
 
         int attempts = 0;
@@ -172,6 +197,12 @@ public class AdminClient extends Client
 
 
     
+
+
+    /**
+     * Implementing the base class abstract method.
+     * Executes a command specified by the client from the main menu input.
+     */
     protected void executeCommand() throws RemoteException, AuthenticationException {
         
         //Tokenise the users input, split the input using the spaces
@@ -184,9 +215,8 @@ public class AdminClient extends Client
             return;
         }
 
-        String methodToExecute = command.get(0);
-
         //Execute the command
+        String methodToExecute = command.get(0);
         switch (methodToExecute) 
         {
             case "addCurrency":
@@ -233,6 +263,13 @@ public class AdminClient extends Client
 
 
 
+
+    /**
+     * Execute the addCurrency command.
+     * Adds a new currency.
+     * @throws AuthenticationException if the session key is invalid.
+     * @throws RemoteException if an error occurred executing the web service method.
+     */
     private void addCurrency() throws AuthenticationException, RemoteException {
         String networkError = "ERROR: A network error occurred while trying to execute addCurrency(). Please confirm the service is available.";
 
@@ -255,6 +292,15 @@ public class AdminClient extends Client
         }
     }
 
+
+
+
+    /**
+     * Execute the removeCurrency command.
+     * Removes a currency.
+     * @throws AuthenticationException if the session key is invalid.
+     * @throws RemoteException if an error occurred executing the web service method.
+     */
     private void removeCurrency() throws AuthenticationException, RemoteException {
         String networkError = "ERROR: A network error occurred while trying to execute removeCurrency(). Please confirm the service is available.";
         
@@ -265,7 +311,7 @@ public class AdminClient extends Client
             return;
         
 
-        //Call the service to remove the currency
+        //Call the service to remove the currency and print the result
         try
         {
             String successMSG = command.get(1).toUpperCase() + " successfully removed.";
@@ -278,6 +324,15 @@ public class AdminClient extends Client
         }
     }
 
+
+
+
+    /**
+     * Execute the listCurrencies command.
+     * List all the currencies the service offers.
+     * @throws AuthenticationException if the session key is invalid.
+     * @throws RemoteException if an error occurred executing the web service method.
+     */
     private void listCurrencies() throws AuthenticationException, RemoteException {
         String networkError = "ERROR: A network error occurred while trying to execute listCurrencies(). Please confirm the service is available.";        
         String title = "List of All Currencies:";
@@ -294,6 +349,16 @@ public class AdminClient extends Client
         }
     }
 
+
+
+
+
+    /**
+     * Execute the conversionsFor command.
+     * Get the conversion rate between two specified currencies.
+     * @throws AuthenticationException if the session key is invalid.
+     * @throws RemoteException if an error occurred executing the web service method.
+     */
     private void conversionsFor() throws AuthenticationException, RemoteException {
         String networkError = "ERROR: A network error occurred while trying to execute conversionsFor(). Please confirm the service is available.";        
 
@@ -320,6 +385,12 @@ public class AdminClient extends Client
 
 
 
+    /**
+     * Execute the addRate command.
+     * Add a conversion rate between two specified currencies
+     * @throws AuthenticationException if the session key is invalid.
+     * @throws RemoteException if an error occurred executing the web service method.
+     */
     private void addRate() throws AuthenticationException, RemoteException {
         String networkError = "ERROR: A network error occurred while trying to execute addRate(). Please confirm the service is available.";        
         String commandErrorMSG = "ERROR: Cannot execute addRate command. You did not supply the correct parameters such as <fromCurrencyCode>, <toCurrency> and <rate>.";
@@ -355,6 +426,14 @@ public class AdminClient extends Client
     }
 
 
+
+
+    /**
+     * Execute the updateRate command.
+     * Updates the conversion rate between two specified currencies.
+     * @throws AuthenticationException if the session key is invalid.
+     * @throws RemoteException if an error occurred executing the web service method.
+     */
     private void updateRate() throws AuthenticationException, RemoteException {
         String networkError = "ERROR: A network error occurred while trying to execute updateRate(). Please confirm the service is available.";        
         
@@ -391,6 +470,15 @@ public class AdminClient extends Client
 
 
 
+
+
+
+    /**
+     * Execute the removeRate command.
+     * Removes the conversion rate between the two specified currencies.
+     * @throws AuthenticationException if the session key is invalid.
+     * @throws RemoteException if an error occurred executing the web service method.
+     */
     private void removeRate() throws AuthenticationException, RemoteException {
         String networkError = "ERROR: A network error occurred while trying to execute removeRate(). Please confirm the service is available.";
         
@@ -414,6 +502,15 @@ public class AdminClient extends Client
     }
 
 
+
+
+
+    /**
+     * Execute the listRates command.
+     * Lists all the conversion rates provided by the service.
+     * @throws AuthenticationException if the session key is invalid.
+     * @throws RemoteException if an error occurred executing the web service method.
+     */
     private void listRates() throws AuthenticationException, RemoteException {
         String networkError = "ERROR: A network error occurred while trying to execute listRates(). Please confirm the service is available.";
         String title = "List of All Conversion Rates";
@@ -433,6 +530,9 @@ public class AdminClient extends Client
 
 
 
+    /**
+     * Log the user out and exit the application
+     */
     @Override
     protected void exit() {
 
@@ -452,6 +552,19 @@ public class AdminClient extends Client
     }
 
 
+
+
+    /**
+     * Helper method used to determine if a remote exception is actually a Authentication exception
+     * thrown by the Authorisation endpoint. This is done because when an exception is thrown via an
+     * Endpoint it actually throws an AxisFault exception and the fault string contains the type of
+     * exception which caused the fault. If the fault string contains the AuthenticationException then
+     * it is because the session key the user provided is invalid.
+     * @param e - The exception that was thrown
+     * @param exceptionMessageIfNotAuthException - The message to display if the exception is not an Authentication exception.
+     * @throws AuthenticationException if the exception actually is an Authentication exception.
+     * @throws RemoteException if the exception is not an authentication error
+     */
     private void throwAuthExeception(RemoteException e, String exceptionMessageIfNotAuthException) throws AuthenticationException, RemoteException {
         
         //The type of exception thrown by the Axis web service
@@ -462,7 +575,7 @@ public class AdminClient extends Client
             if(ex.getFaultString().contains("javax.security.sasl.AuthenticationException"))
                 throw new AuthenticationException("ERROR: Authentication Error. Your session key is invalid.");
             
-            //Otherwise just throw a remove exception
+            //Otherwise just throw a RemoteException with the specified message
             else
                 throw new RemoteException(exceptionMessageIfNotAuthException);
         }

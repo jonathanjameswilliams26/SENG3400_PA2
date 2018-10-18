@@ -17,7 +17,8 @@ public class CurrencyDatabaseInterface {
     //CONSTANTS
     private static final double INVALID_REQUEST = -1.0;
     
-    private HashMap<String, Currency> currencies;
+    private static boolean initialised = false;                             //A flag which outlines if the database has been initialised with the default currencies and rates               
+    private static HashMap<String, Currency> currencies = new HashMap<>();  //The data structure which stores the currencies <CurrencyCode, Currency>
 
     
     /**
@@ -25,10 +26,8 @@ public class CurrencyDatabaseInterface {
      */
     public CurrencyDatabaseInterface() {
         
-        File databaseFile = new File("currencyDatabase.txt");
-
-        //The file does not exist, add the default currencies and rates
-        if(!databaseFile.exists() && !databaseFile.isDirectory())
+        //If the database has not been initialised add the default currencies
+        if(!initialised)
             initDatabase();
     }
 
@@ -40,36 +39,37 @@ public class CurrencyDatabaseInterface {
     
     /**
      * Gets a list of all rates inside the database
-     * 
-     * @return - A String[] containing the list of rates
+     * @return - A String[] containing the list of rates, an empty array if the database does not contain any currencies or rates.
      */
     public String[] listRates() {
-            
-        //Read the database file for up to date information
-        currencies = readDatabaseFile();
 
-        Currency[] allCurrencies = getAllCurrencies();
-        if(allCurrencies == null)
+        //Confirm the database is not empty
+        if(currencies.isEmpty())
         {
             System.out.println("ERROR: There is no currencies in the database, cannot get rates.");
             return new String[0];
         }
 
         //Loop through all of the currencies and build the array list
+        Currency[] allCurrencies = getAllCurrencies();
         ArrayList<String> ratesList = new ArrayList<>();
         for (Currency currency : allCurrencies) 
         {
-            String[] rates = currency.getRates();
-
-            if(rates == null)
+            //If the currency does not contain any rates move onto the next currency
+            if(!currency.isTradable())
                 continue;
             
-            //Loop through each of the rates and append them to the output
+            //Get the rates and loop through each of the rates and append them to the output
+            String[] rates = currency.getRates();
             for(String rate : rates)
-            {
                 ratesList.add(rate);
-            }
         }
+
+        //Print a success or error message if there is rates to display
+        if(ratesList.isEmpty())
+            System.out.println("ERROR: There is no rates in the database.");
+        else
+            System.out.println("SUCCESS: Retrieved all rates from the database.");
 
         //Return the arrayList as a normal string array
         return ratesList.toArray(new String[0]);
@@ -77,17 +77,16 @@ public class CurrencyDatabaseInterface {
 
 
 
+
+
+
     /**
      * Gets the conversion rate between the passed in currency codes
-     * 
      * @param fromCurrencyCode - The currency converting from
      * @param toCurrencyCode - The currency converting to
      * @return - The conversion rate between the two currencies, -1 if either codes does not exist
      */
     public double rateOf(String fromCurrencyCode, String toCurrencyCode) {
-        
-        //Read the database file for up to date information
-        currencies = readDatabaseFile();
         
         //If the currency does not exist in the database return a negative value
         if(!currencies.containsKey(fromCurrencyCode))
@@ -104,22 +103,16 @@ public class CurrencyDatabaseInterface {
 
 
 
+
+
     /**
-     * Converts the amount passed in from one currency to another.
-     * 
+     * Converts the amount passed in from one currency to another including a 1% conversion fee.
      * @param fromCurrencyCode - The currency converting from
      * @param toCurrencyCode - The currency converting to
      * @param amount - The amount being converted
      * @return - The converted amount or negative value if the amount is invalid or the codes does not exist
      */
     public double convert(String fromCurrencyCode, String toCurrencyCode, double amount) {
-
-        //Read the database file for up to date information
-        currencies = readDatabaseFile();
-
-        //If the amount is equal to or less than 0 return invalid request
-        if(amount <= 0)
-            return INVALID_REQUEST;
 
         //If the currency does not exist in the database return a negative value
         if(!currencies.containsKey(fromCurrencyCode))
@@ -146,17 +139,14 @@ public class CurrencyDatabaseInterface {
 
     /**
      * Adds a new currency to be converted by the Currency Service.
-     * 
      * @param - sessionKey - The users session key.
      * @param - currencyCode - The currency code to add to the service.
      * @return - TRUE if the currency was successfully added, FALSE otherwise.
+     * @throws AuthenticationException If the session key does not exist
      */
     public boolean addCurrency(String sessionKey, String currencyCode) throws AuthenticationException {
         
         validateSessionKey(sessionKey);
-
-        //Read the database file for up to date information
-        currencies = readDatabaseFile();
         
         //Confirm the currency code does not already exist within the database
         if(currencies.containsKey(currencyCode))
@@ -166,31 +156,31 @@ public class CurrencyDatabaseInterface {
         }
             
         //Add the currency to the database
+        System.out.println("SUCCESS: Currency successfully added.");
         currencies.put(currencyCode, new Currency(currencyCode));
-        return save();
+        return true;
     }
+
+
 
 
 
 
     /**
      * Removes a currency and all associated conversion rates from the service.
-     * 
      * @param - sessionKey - The users session key.
      * @param - currencyCode - The currency code to remove to the service.
      * @return - TRUE if the currency was successfully removed, FALSE otherwise.
+     * @throws AuthenticationException If the session key does not exist
      */
     public boolean removeCurrency(String sessionKey, String currencyCode) throws AuthenticationException {
         
         validateSessionKey(sessionKey);
 
-        //Read the database file for up to date information
-        currencies = readDatabaseFile();
-
         //Check the currency code passed in exists
         if(!currencies.containsKey(currencyCode))
         {
-            System.out.println("ERROR: Cannot remove currency. The currency code does not exist in the database.");
+            System.out.println("ERROR: Cannot execute removeCurrency() because the currencyCode does not exist in the database.");
             return false;
         }
         
@@ -198,42 +188,51 @@ public class CurrencyDatabaseInterface {
         currencies.remove(currencyCode);
 
         //Get all the currencies in the DB and remove the rate from each
-        for (Currency currency : getAllCurrencies()) {
-            if(currency.containsRate(currencyCode))
-                currency.removeRate(currencyCode);
+        if(!currencies.isEmpty())
+        {
+            for (Currency currency : getAllCurrencies()) {
+                if(currency.containsRate(currencyCode))
+                    currency.removeRate(currencyCode);
+            }
         }
-
-        return save();
+        
+        System.out.println("SUCCESS: Currency successfully removed.");
+        return true;
     }
 
     
 
+
+
+
     /**
      * Gets the list of all supported currencies for the service.
-     * 
      * @param - sessionKey - The users session key.
      * @return - A string array containing the currencies supported.
+     * @throws AuthenticationException If the session key does not exist
      */
     public String[] listCurrencies(String sessionKey) throws AuthenticationException {
         
         validateSessionKey(sessionKey);
 
-        //Read the database file for up to date information
-        currencies = readDatabaseFile();
-
-        Currency[] currencies = getAllCurrencies();
-
-        //If null was returned from the database there is no currencies, return an empty array
-        if(currencies == null)
+        //Confirm the database is not empty
+        if(currencies.isEmpty())
+        {
+            System.out.println("ERROR: Cannot execute listCurrencies() because the database is empty.");
             return new String[0];
+        }
 
         //Loop through all the currencies and build the currency codes array
+        Currency[] currencies = getAllCurrencies();
         String[] codes = new String[currencies.length];
         for (int i = 0; i < currencies.length; i++)
             codes[i] = currencies[i].getCode();
 
+        System.out.println("SUCCESS: Currencies retrieved.");
         return codes;
     }
+
+
 
 
 
@@ -247,20 +246,11 @@ public class CurrencyDatabaseInterface {
      * @param - toCurrencyCode - The currency code the conversion is to.
      * @param - conversionRate - The rate at which the two currencies are converted.
      * @return - TRUE if the rate was successfully added to the currency, FALSE otherwise.
+     * @throws AuthenticationException If the session key does not exist
      */
     public boolean addRate(String sessionKey, String fromCurrencyCode, String toCurrencyCode, double conversionRate) throws AuthenticationException {
       
         validateSessionKey(sessionKey);
-
-        //If the conversionRate is invalid return false
-        if(conversionRate <= 0)
-        {
-            System.out.println("ERROR: Cannot execute addRate() because the conversionRate is invalid.");
-            return false;
-        }
-
-        //Read the database file for up to date information
-        currencies = readDatabaseFile();
 
         //Confirm the fromCode and toCode exists in the database
         if(!currencies.containsKey(fromCurrencyCode) || !currencies.containsKey(toCurrencyCode))
@@ -282,10 +272,6 @@ public class CurrencyDatabaseInterface {
             Currency inverseCurrency = currencies.get(toCurrencyCode);
             double inverseRate = 1.0/conversionRate;
             isSuccessful = inverseCurrency.addRate(fromCurrencyCode, inverseRate);
-            
-            //Save the database
-            if(isSuccessful)
-                isSuccessful = save();
         }
 
         return isSuccessful;
@@ -294,25 +280,24 @@ public class CurrencyDatabaseInterface {
 
 
 
+
+
     /**
      * Gets a list of all possible conversions with rate for the specified currency code.
      * In the format of: AUD-USD:0.7
-     * 
      * @param - sessionKey - The users session key.
      * @param - currencyCode - The currency code to retrieve all rates for
      * @return - A string array containing all the conversion rates for the specified currency code
+     * @throws AuthenticationException If the session key does not exist
      */
     public String[] conversionsFor(String sessionKey, String currencyCode) throws AuthenticationException {
         
         validateSessionKey(sessionKey);
 
-        //Read the database file for up to date information
-        currencies = readDatabaseFile();
-
-        //Confirm the fromCode and toCode exists in the database
+        //Confirm the currency code exists in the database
         if(!currencies.containsKey(currencyCode))
         {
-            System.out.println("ERROR: Cannot execute conversionFor() because the fromCurrencyCode does not exist in the database.");
+            System.out.println("ERROR: Cannot execute conversionFor() because the currencyCode does not exist in the database.");
             return new String[0];
         }
 
@@ -326,34 +311,26 @@ public class CurrencyDatabaseInterface {
 
 
 
+
+
     /**
      * Updates the conversion rate between the specified currencies
      * This method will also update the inverse conversion rate.
-     * 
      * @param - sessionKey - The users session key.
      * @param - fromCurrencyCode - The currency code the conversion is from.
      * @param - toCurrencyCode - The currency code the conversion is to.
      * @param - rate - The new rate at which the two currencies are converted.
      * @return - TRUE if the rate was successfully updated for the currency, FALSE otherwise.
+     * @throws AuthenticationException If the session key does not exist
      */
     public boolean updateRate(String sessionKey, String fromCurrencyCode, String toCurrencyCode, double rate) throws AuthenticationException {
         
         validateSessionKey(sessionKey);
 
-        //If the rate is invalid return false
-        if(rate <= 0)
-        {
-            System.out.println("ERROR: Cannot execute updateRate() because the rate is invalid.");
-            return false;
-        }
- 
-        //Read the database file for up to date information
-        currencies = readDatabaseFile();
-
         //Confirm the fromCode and toCode exists in the database
         if(!currencies.containsKey(fromCurrencyCode) || !currencies.containsKey(toCurrencyCode))
         {
-            System.out.println("ERROR: The fromCurrencyCode or toCurrencyCode does not exist in the database.");
+            System.out.println("ERROR: Cannot execute updateRate() because the fromCurrencyCode or toCurrencyCode does not exist in the database.");
             return false;
         }
 
@@ -370,40 +347,37 @@ public class CurrencyDatabaseInterface {
             Currency inverseCurrency = currencies.get(toCurrencyCode);
             double inverseRate = 1.0/rate;
             isSuccessful = inverseCurrency.updateRate(fromCurrencyCode, inverseRate);
-
-            //Save the database
-            if(isSuccessful)
-                isSuccessful = save();
         }
         return isSuccessful;
     }
 
 
+
+
+
+
     /**
      * Removes all conversion rates between the specified currencies.
      * Will also remove the inverse conversion rate.
-     * 
      * @param - sessionKey - The users session key.
      * @param - fromCurrencyCode - The currency code the conversion is from.
      * @param - toCurrencyCode - The currency code the conversion is to.
      * @return - TRUE if the rate was successfully removed from the currency, FALSE otherwise.
+     * @throws AuthenticationException If the session key does not exist
      */
     public boolean removeRate(String sessionKey, String fromCurrencyCode, String toCurrencyCode) throws AuthenticationException {
         
         validateSessionKey(sessionKey);
- 
-        //Read the database file for up to date information
-        currencies = readDatabaseFile();
 
         //Confirm the the currency codes exist in the database
         if(!currencies.containsKey(fromCurrencyCode))
         {
-            System.out.println("ERROR: Cannot remove rate. The fromCurrencyCode does not exist in the database.");
+            System.out.println("ERROR: Cannot execute removeRate() because the fromCurrencyCode does not exist in the database.");
             return false;
         }
         if(!currencies.containsKey(toCurrencyCode))
         {
-            System.out.println("ERROR: Cannot remove rate. The toCurrencyCode does not exist in the database.");
+            System.out.println("ERROR: Cannot execute removeRate() because the toCurrencyCode does not exist in the database.");
             return false;
         }
 
@@ -416,15 +390,18 @@ public class CurrencyDatabaseInterface {
         //Remove the inverse rate
         Currency inverse = currencies.get(toCurrencyCode);
         isSuccessful = inverse.removeRate(fromCurrencyCode);
-
-        //If successfully removed save the database
-        if(isSuccessful)
-            isSuccessful = save();
-
         return isSuccessful;
     }
 
 
+
+
+
+    /**
+     * Gets a list of all rates inside the database
+     * @return - A String[] containing the list of rates, an empty array if the database does not contain any currencies or rates.
+     * @throws AuthenticationException If the session key does not exist
+     */
     public String[] listRates(String sessionKey) throws AuthenticationException {
         validateSessionKey(sessionKey);
         return listRates();
@@ -438,6 +415,12 @@ public class CurrencyDatabaseInterface {
     //------------------------------------------------------------------------
     //------------------------------------------------------------------------
 
+
+    /**
+     * Validates a users session key and confirm the session key exists using the Authorisation endpoint
+     * @param sessionKey - The session key to validate
+     * @throws AuthenticationException If the session key does not exist
+     */
     private void validateSessionKey(String sessionKey) throws AuthenticationException {
 
         try
@@ -448,9 +431,7 @@ public class CurrencyDatabaseInterface {
             
             //If the authorisation fails, throw a Authenication exception
             if(!serviceInterface.authorise(sessionKey))
-            {
                 throw new AuthenticationException();
-            }
         }
         catch (Exception e)
         {
@@ -459,53 +440,16 @@ public class CurrencyDatabaseInterface {
     }
 
 
-    private HashMap<String, Currency> readDatabaseFile() {
-        
-        try
-        {   
-            File f = new File("currencyDatabase.txt");
-            if(!f.exists())
-                initDatabase();
-
-            FileInputStream in = new FileInputStream("currencyDatabase.txt");
-            ObjectInputStream objectIn = new ObjectInputStream(in);
-            Object obj = objectIn.readObject();
-            objectIn.close();
-            in.close();
-            return (HashMap<String, Currency>) obj;
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            return null;
-        }
-    }
 
 
-    private boolean save() {
-        try
-        {
-            FileOutputStream out = new FileOutputStream("currencyDatabase.txt");
-            ObjectOutputStream objOut = new ObjectOutputStream(out);
-            objOut.writeObject(currencies);
-            objOut.flush();
-            objOut.close();
-            out.flush();
-            out.close();
-            return true;
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-
-
+    /**
+     * Gets all the currencies from the database.
+     * @return - A Currency array of all the currencies in the database.
+     * An empty array if the database is empty
+     */
     private Currency[] getAllCurrencies() {
         //If there is no currencies in the database return null
-        if(currencies.size() == 0)
+        if(currencies.isEmpty())
         {
             System.out.println("ERROR: There is no currencies in the database.");
             return new Currency[0];
@@ -523,8 +467,14 @@ public class CurrencyDatabaseInterface {
     }
 
 
+
+
+
+    /**
+     * Initalises the database with the default currencies and conversion rates.
+     */
     private void initDatabase() {
-        currencies = new HashMap<>();
+        //Add the default currencies
         currencies.put("AUD", new Currency("AUD"));
         currencies.put("USD", new Currency("USD"));
         currencies.put("NZD", new Currency("NZD"));
@@ -539,6 +489,7 @@ public class CurrencyDatabaseInterface {
         currencies.get("USD").addRate("AUD", 1.0/0.7);
         currencies.get("NZD").addRate("AUD", 1.0/1.09);
         currencies.get("GBP").addRate("AUD", 1.0/0.5);
-        save();
+
+        initialised = true;
     }
 }

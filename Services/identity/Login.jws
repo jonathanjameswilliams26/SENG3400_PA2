@@ -11,18 +11,19 @@ public class Login {
      *         username or password is incorrect "INVALID" is returned.
      */
     public String login(String username, String password) {
+        System.out.println("\nLogin Endpoint - Executing login()");
         return database.login(username, password);
     }
 
 
     /**
-     * The endpoint which logs a user out of the application.
+     * Logs the users out of the application by invalidating a users session key.
      * 
      * @param key - The users session key.
-     * @return - A random 5 character string which is the session key. If the
-     *         username or password is incorrect "INVALID" is returned.
+     * @return - TRUE if the users successfully logged out. FALSE otherwise.
      */
     public boolean logout(String key) {
+        System.out.println("\nLogin Endpoint - Executing logout()");
         return database.logout(key);
     }
 }
