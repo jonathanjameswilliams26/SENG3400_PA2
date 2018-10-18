@@ -1,8 +1,3 @@
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -12,6 +7,17 @@ import javax.xml.rpc.ServiceException;
 import javax.security.sasl.AuthenticationException;
 import localhost.identity.Authorisation_jws.*;
 
+/**
+* This class represents a "dummy" database for the currencies and their
+* rates to be stored. The database offers CRUD operations in order to provide
+* data offered by the Conversion and Admin web services.
+*
+* IMPORTANT NOTE: The currencies and their rates are not persistent as specified by Hayden.
+* So when the server is restarted the currencies will reinitalised with the default currencies and rates.
+*
+* @author  Jonathan Williams - C3237808 - SENG3400 Assignment 2
+* @since   18/10/2018
+*/
 public class CurrencyDatabaseInterface {
     
     //CONSTANTS

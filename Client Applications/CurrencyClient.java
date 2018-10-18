@@ -4,6 +4,14 @@ import javax.management.ServiceNotFoundException;
 import javax.xml.rpc.ServiceException;
 import localhost.currency.Conversion_jws.*;
 
+
+/**
+* This class is a subclass of Client. This is the client console application which
+* exposes the Conversion Endpoint provided by the Currency Service.
+*
+* @author  Jonathan Williams - C3237808 - SENG3400 Assignment 2
+* @since   18/10/2018
+*/
 public class CurrencyClient extends Client {
 
     private ConversionService service;      //The conversion web service       

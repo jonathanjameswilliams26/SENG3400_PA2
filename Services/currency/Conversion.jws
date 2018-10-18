@@ -1,3 +1,8 @@
+/**
+* The Conversion Endpoint provided by the Currency Service.
+* @author  Jonathan Williams - C3237808 - SENG3400 Assignment 2
+* @since   18/10/2018
+*/
 public class Conversion {
 
     private static CurrencyDatabaseInterface database = new CurrencyDatabaseInterface();

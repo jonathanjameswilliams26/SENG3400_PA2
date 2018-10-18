@@ -1,3 +1,8 @@
+/**
+* The Login Endpoint provided by the Identity Service.
+* @author  Jonathan Williams - C3237808 - SENG3400 Assignment 2
+* @since   18/10/2018
+*/
 public class Login {
 
     private static UserDatabase database = new UserDatabase();

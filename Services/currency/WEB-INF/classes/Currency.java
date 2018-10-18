@@ -2,6 +2,14 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+* This class represents a Currency, a currency is represented by a Currency code
+* and a currency can contain a number of conversion rates between other currencies.
+* This class offers CRUD operations in order to create/read/update/delete conversion rates.
+*
+* @author  Jonathan Williams - C3237808 - SENG3400 Assignment 2
+* @since   18/10/2018
+*/
 public class Currency {
     
     //The value returned for invalid requests

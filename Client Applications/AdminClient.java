@@ -10,6 +10,15 @@ import javax.security.sasl.AuthenticationException;
 import javax.xml.rpc.ServiceException;
 import org.apache.axis.AxisFault;
 
+
+/**
+* This class is a subclass of Client. This is the client console application which
+* exposes the Admin Endpoint provided by the Currency Service and the Login Endpoint
+* provided by the Identity Service. All requests made via this application require authentication.
+*
+* @author  Jonathan Williams - C3237808 - SENG3400 Assignment 2
+* @since   18/10/2018
+*/
 public class AdminClient extends Client
 {
     private String username;            //The clients username entered via the command line as an argument

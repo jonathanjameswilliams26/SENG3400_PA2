@@ -4,6 +4,19 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
 
+/**
+* This class represents a "dummy" database for user accounts and active sessions.
+* User accounts will be stored in the database as <Username, password> pairs and
+* contains the default username of "hayden" and "josh". 
+*
+* This class also stores session information, so when a user logs in they are assigned a sesson key.
+*
+* IMPORTANT NOTE: The session information is not persistent, so when the server shuts down all session
+* information will be removed.
+*
+* @author  Jonathan Williams - C3237808 - SENG3400 Assignment 2
+* @since   18/10/2018
+*/
 public class UserDatabase {
 
     //CONSTANTS
@@ -28,6 +41,9 @@ public class UserDatabase {
     }
 
 
+
+
+    
     /**
      * Logs a user into the application and generates a session key.
      * 
@@ -55,6 +71,7 @@ public class UserDatabase {
         //The username and password is valid, generate and set the session key
         return generateNewSessionKey(username);
     }
+
 
 
 
@@ -111,6 +128,9 @@ public class UserDatabase {
     }
 
 
+
+
+
     /**
      * Logs the users out of the application by invalidating a users session key.
      * 
@@ -130,6 +150,9 @@ public class UserDatabase {
         System.out.println("ERROR: Failed to log out user because session key does not exist.");
         return false;
     }
+
+
+
 
 
     /**

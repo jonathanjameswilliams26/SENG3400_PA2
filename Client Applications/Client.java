@@ -5,6 +5,15 @@ import javax.xml.rpc.ServiceException;
 import java.rmi.RemoteException;
 import javax.security.sasl.AuthenticationException;
 
+/**
+* This class is an abstract class which represents a client application.
+* This class is a super class and has two subclasses (CurrencyClient and AdminClient).
+* This class provides common member variables and concrete methods used by both subclasses and declares the abstract method
+* executeCommand() since the different clients will require a unique implementation for this method.
+*
+* @author  Jonathan Williams - C3237808 - SENG3400 Assignment 2
+* @since   18/10/2018
+*/
 public abstract class Client {
     
     protected boolean exit;                 //A flag value which indicates if the program should exit

@@ -1,6 +1,12 @@
 import java.rmi.RemoteException;
 import javax.xml.rpc.ServiceException;
 import javax.security.sasl.AuthenticationException;
+
+/**
+* The Admin Endpoint provided by the Currency Service.
+* @author  Jonathan Williams - C3237808 - SENG3400 Assignment 2
+* @since   18/10/2018
+*/
 public class Admin {
 
     private static CurrencyDatabaseInterface database = new CurrencyDatabaseInterface();
