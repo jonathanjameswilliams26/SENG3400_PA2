@@ -29,6 +29,7 @@ public class Currency {
         this.code = code;
         rates = new HashMap<>();
         tradeable = false;
+        System.out.println("SUCCESS: Created currency - " + code);
     }
 
 
@@ -63,6 +64,15 @@ public class Currency {
      */
     public boolean addRate(String codeToAdd, double rate) {
         
+        System.out.println(code + " - Attempting to add conversion rate - " + codeToAdd + ":" + String.format("%.4f", rate));
+
+        //Confirm the new rate is within the valid range
+        if(rate <= 0)
+        {
+            System.out.println("ERROR: Cannot add rate because the <rate> is invalid.");
+            return false;
+        }
+        
         //Confirm the codeToAdd does not already exist inside the rate
         if(rates.containsKey(codeToAdd))
         {
@@ -92,6 +102,8 @@ public class Currency {
      */
     public boolean updateRate(String codeToUpdate, double newRate) {
         
+        System.out.println(code + " - Attempting to update conversion rate - " + codeToUpdate + ":" + String.format("%.4f", newRate));
+
         //Confirm the new rate is within the valid range
         if(newRate <= 0)
         {
@@ -122,6 +134,8 @@ public class Currency {
      */
     public boolean removeRate(String codeToRemove) {
         
+        System.out.println(code + " - Attempting to remove conversion rate - " + codeToRemove);
+
         //Confirm the codeToRemove exists inside the rates
         if(!rates.containsKey(codeToRemove))
         {
@@ -151,6 +165,8 @@ public class Currency {
      */
     public double rateOf(String code) {
         
+        System.out.println(this.code + " - Attempting to get the conversion rate of - " + code);
+
         //Confirm the code passed in exists
         if(!rates.containsKey(code))
         {
@@ -159,6 +175,7 @@ public class Currency {
         }
 
         //Return the conversion rate of the currency
+        System.out.println("SUCCESS: Successfully retreived rate from currency.");
         return rates.get(code);
     }
 
@@ -173,6 +190,8 @@ public class Currency {
      * @return - The converted amount, negative value if unsuccessful.
      */
     public double convert(String convertToCurrency, double amount) {
+
+        System.out.println(code + " - Attempting to convert " + String.format("%.4f", amount) + " to " + convertToCurrency);
 
         //confirm the amount is valid
         if(amount <= 0)
@@ -219,6 +238,8 @@ public class Currency {
      * if the currency does not contain any rates
      */
     public String[] getRates() {
+
+        System.out.println(code + " - Attempting to get all the conversion rates.");
 
         //Confirm the currency has conversion rates, return an empty array if not
         if(!tradeable)

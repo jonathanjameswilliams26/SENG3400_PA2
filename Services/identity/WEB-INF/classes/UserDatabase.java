@@ -123,7 +123,7 @@ public class UserDatabase {
 
             isComplete = true;
         }
-        System.out.println("SUCCESS: User successfully logged in. Session key: " + key);
+        System.out.println("SUCCESS: " + username + " successfully logged in. Session key: " + key);
         return key;
     }
 

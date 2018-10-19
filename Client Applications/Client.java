@@ -133,10 +133,11 @@ public abstract class Client {
      * @param errorMSG - The error message to display if the command is null or does not contain the required number of parameters
      * @return - TRUE if the command is valid, FALSE otherwise
      */
-    protected boolean isCommandValid(int requiredSize, String errorMSG) {
+    protected boolean isCommandValid(int requiredSize) {
 
         //If the command does not contain the required amount of items
         //print the error message and return false
+        String errorMSG = "ERROR: Cannot execute command because you did not provide the correct number of parameters.";
         if(command == null)
         {
             System.out.println("--------------------------------------");

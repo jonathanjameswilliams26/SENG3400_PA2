@@ -138,8 +138,7 @@ public class CurrencyClient extends Client {
 
         //Confirm there is 4 items in the command list, 1 = command, 2 = fromCurrency, 3 = toCurrency, 4 = amount
         //If the command does not contain 4 items print an error message and leave the method because it was executed incorrectly
-        String commandErrorMSG = "ERROR: Cannot execute addCurrency command. You did not supply a <fromCurrency>, <toCurrency>, <amount>.";
-        if(!isCommandValid(4, commandErrorMSG))
+        if(!isCommandValid(4))
             return;
 
         //Confirm the amount to convert is actually a double
@@ -159,7 +158,7 @@ public class CurrencyClient extends Client {
         {
             double convertedAmount = serviceInterface.convert(command.get(1), command.get(2), actualAmount);
             boolean successful = convertedAmount != -1.0;
-            String successMSG = "$" + String.format("%.2f", convertedAmount) + " (including 1% fee)";
+            String successMSG = String.format("%.4f", convertedAmount) + " (including 1% fee)";
             String errorMSG = "Could not convert from " + command.get(1).toUpperCase() + " to " + command.get(2).toUpperCase() + " because a conversion rate between the currencies does not exist, or an error occurred on the server";
             printResult(successful, successMSG, errorMSG);
         }
@@ -185,8 +184,7 @@ public class CurrencyClient extends Client {
 
         //Confirm there is 4 items in the command list, 1 = command, 2 = fromCurrency, 3 = toCurrency
         //If the command does not contain 3 items print an error message and leave the method because it was executed incorrectly
-        String commandErrorMSG = "ERROR: Cannot execute addCurrency command. You did not supply a <fromCurrency> or <toCurrency>.";
-        if(!isCommandValid(3, commandErrorMSG))
+        if(!isCommandValid(3))
             return;
 
         //Call the service to get the rate of and print the result
@@ -213,7 +211,7 @@ public class CurrencyClient extends Client {
      * @throws RemoteException if an error occurred while trying to execute the web service method.
      */
     private void listRates() throws RemoteException {
-        String networkError = "ERROR: A network error occurred while trying to execute removeCurrency(). Please confirm the service is available.";
+        String networkError = "ERROR: A network error occurred while trying to execute listRates(). Please confirm the service is available.";
         String title = "List of All Conversion Rates";
         String emptyMSG = "No conversion rates found. The database contains no conversion rates or an error occurred on the service.";
         

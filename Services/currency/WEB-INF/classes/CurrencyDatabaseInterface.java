@@ -94,6 +94,10 @@ public class CurrencyDatabaseInterface {
      */
     public double rateOf(String fromCurrencyCode, String toCurrencyCode) {
         
+        //Convert to uppercase to avoid case mismatching
+        fromCurrencyCode = fromCurrencyCode.toUpperCase();
+        toCurrencyCode = toCurrencyCode.toUpperCase();
+
         //If the currency does not exist in the database return a negative value
         if(!currencies.containsKey(fromCurrencyCode))
         {
@@ -119,6 +123,10 @@ public class CurrencyDatabaseInterface {
      * @return - The converted amount or negative value if the amount is invalid or the codes does not exist
      */
     public double convert(String fromCurrencyCode, String toCurrencyCode, double amount) {
+
+        //Convert to uppercase to avoid case mismatching
+        fromCurrencyCode = fromCurrencyCode.toUpperCase();
+        toCurrencyCode = toCurrencyCode.toUpperCase();
 
         //If the currency does not exist in the database return a negative value
         if(!currencies.containsKey(fromCurrencyCode))
@@ -153,6 +161,9 @@ public class CurrencyDatabaseInterface {
     public boolean addCurrency(String sessionKey, String currencyCode) throws AuthenticationException {
         
         validateSessionKey(sessionKey);
+
+        //Convert to uppercase to avoid case mismatching
+        currencyCode = currencyCode.toUpperCase();
         
         //Confirm the currency code does not already exist within the database
         if(currencies.containsKey(currencyCode))
@@ -162,7 +173,6 @@ public class CurrencyDatabaseInterface {
         }
             
         //Add the currency to the database
-        System.out.println("SUCCESS: Currency successfully added.");
         currencies.put(currencyCode, new Currency(currencyCode));
         return true;
     }
@@ -182,6 +192,9 @@ public class CurrencyDatabaseInterface {
     public boolean removeCurrency(String sessionKey, String currencyCode) throws AuthenticationException {
         
         validateSessionKey(sessionKey);
+
+        //Convert to uppercase to avoid case mismatching
+        currencyCode = currencyCode.toUpperCase();
 
         //Check the currency code passed in exists
         if(!currencies.containsKey(currencyCode))
@@ -258,10 +271,19 @@ public class CurrencyDatabaseInterface {
       
         validateSessionKey(sessionKey);
 
-        //Confirm the fromCode and toCode exists in the database
-        if(!currencies.containsKey(fromCurrencyCode) || !currencies.containsKey(toCurrencyCode))
+        //Convert to uppercase to avoid case mismatching
+        fromCurrencyCode = fromCurrencyCode.toUpperCase();
+        toCurrencyCode = toCurrencyCode.toUpperCase();
+
+        //Confirm the the currency codes exist in the database
+        if(!currencies.containsKey(fromCurrencyCode))
         {
-            System.out.println("ERROR: Cannot execute addRate() because the fromCurrencyCode or toCurrencyCode does not exist in the database.");
+            System.out.println("ERROR: Cannot execute addRate() because the fromCurrencyCode does not exist in the database.");
+            return false;
+        }
+        if(!currencies.containsKey(toCurrencyCode))
+        {
+            System.out.println("ERROR: Cannot execute addRate() because the toCurrencyCode does not exist in the database.");
             return false;
         }
         
@@ -300,6 +322,9 @@ public class CurrencyDatabaseInterface {
         
         validateSessionKey(sessionKey);
 
+        //Convert to uppercase to avoid case mismatching
+        currencyCode = currencyCode.toUpperCase();
+
         //Confirm the currency code exists in the database
         if(!currencies.containsKey(currencyCode))
         {
@@ -333,10 +358,19 @@ public class CurrencyDatabaseInterface {
         
         validateSessionKey(sessionKey);
 
-        //Confirm the fromCode and toCode exists in the database
-        if(!currencies.containsKey(fromCurrencyCode) || !currencies.containsKey(toCurrencyCode))
+        //Convert to uppercase to avoid case mismatching
+        fromCurrencyCode = fromCurrencyCode.toUpperCase();
+        toCurrencyCode = toCurrencyCode.toUpperCase();
+
+        //Confirm the the currency codes exist in the database
+        if(!currencies.containsKey(fromCurrencyCode))
         {
-            System.out.println("ERROR: Cannot execute updateRate() because the fromCurrencyCode or toCurrencyCode does not exist in the database.");
+            System.out.println("ERROR: Cannot execute updateRate() because the fromCurrencyCode does not exist in the database.");
+            return false;
+        }
+        if(!currencies.containsKey(toCurrencyCode))
+        {
+            System.out.println("ERROR: Cannot execute updateRate() because the toCurrencyCode does not exist in the database.");
             return false;
         }
 
@@ -375,6 +409,10 @@ public class CurrencyDatabaseInterface {
         
         validateSessionKey(sessionKey);
 
+        //Convert to uppercase to avoid case mismatching
+        fromCurrencyCode = fromCurrencyCode.toUpperCase();
+        toCurrencyCode = toCurrencyCode.toUpperCase();
+
         //Confirm the the currency codes exist in the database
         if(!currencies.containsKey(fromCurrencyCode))
         {
@@ -394,8 +432,11 @@ public class CurrencyDatabaseInterface {
         boolean isSuccessful = removeFrom.removeRate(toCurrencyCode);
 
         //Remove the inverse rate
-        Currency inverse = currencies.get(toCurrencyCode);
-        isSuccessful = inverse.removeRate(fromCurrencyCode);
+        if(isSuccessful)
+        {
+            Currency inverse = currencies.get(toCurrencyCode);
+            isSuccessful = inverse.removeRate(fromCurrencyCode);
+        }
         return isSuccessful;
     }
 
@@ -480,6 +521,9 @@ public class CurrencyDatabaseInterface {
      * Initalises the database with the default currencies and conversion rates.
      */
     private void initDatabase() {
+        
+        System.out.println("Initialising database with default currencies and rates.");
+        
         //Add the default currencies
         currencies.put("AUD", new Currency("AUD"));
         currencies.put("USD", new Currency("USD"));
@@ -497,5 +541,7 @@ public class CurrencyDatabaseInterface {
         currencies.get("GBP").addRate("AUD", 1.0/0.5);
 
         initialised = true;
+
+        System.out.println("SUCCESS: Successfully initialised the database.");
     }
 }

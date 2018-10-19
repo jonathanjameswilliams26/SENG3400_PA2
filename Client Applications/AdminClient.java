@@ -284,8 +284,7 @@ public class AdminClient extends Client
 
         //Confirm there is 2 items in the command list, one being the command and the other being the currency code to add
         //If the command does not contain print an error message and leave the method because it was executed incorrectly
-        String commandErrorMSG = "ERROR: Cannot execute addCurrency command. You did not supply a <currencyCode>.";
-        if(!isCommandValid(2, commandErrorMSG))
+        if(!isCommandValid(2))
             return;
 
         //Call the service to add the currency
@@ -315,8 +314,7 @@ public class AdminClient extends Client
         
         //Confirm there is 2 items in the command list, one being the command and the other being the currency code to remove
         //If the command does not contain 2 items print an error message and leave the method because it was executed incorrectly
-        String commandErrorMSG = "ERROR: Cannot execute removeCurrency command. You did not supply a <currencyCode>";
-        if(!isCommandValid(2, commandErrorMSG))
+        if(!isCommandValid(2))
             return;
         
 
@@ -373,8 +371,7 @@ public class AdminClient extends Client
 
         //Confirm there is 2 items in the command list, one being the command and the other being the currency code to list
         //If the command does not contain 2 items print an error message and leave the method because it was executed incorrectly
-        String commandErrorMSG = "ERROR: Cannot execute conversionsFor command. You did not supply a <currencyCode>";
-        if(!isCommandValid(2, commandErrorMSG))
+        if(!isCommandValid(2))
             return;
 
         //Call the service to list the conversions for
@@ -402,11 +399,10 @@ public class AdminClient extends Client
      */
     private void addRate() throws AuthenticationException, RemoteException {
         String networkError = "ERROR: A network error occurred while trying to execute addRate(). Please confirm the service is available.";        
-        String commandErrorMSG = "ERROR: Cannot execute addRate command. You did not supply the correct parameters such as <fromCurrencyCode>, <toCurrency> and <rate>.";
         
         //Confirm there is 4 items in the command list, 1 = command, 2 = fromCurrencyCode, 3 = toCurrencyCode, 4 = conversionRate
         //If the command does not contain 4 items print an error message and leave the method because it was executed incorrectly
-        if(!isCommandValid(4, commandErrorMSG))
+        if(!isCommandValid(4))
             return;
 
         //Confirm the conversion rate is actually a double
@@ -448,8 +444,7 @@ public class AdminClient extends Client
         
         //Confirm there is 4 items in the command list, 1 = command, 2 = fromCurrencyCode, 3 = toCurrencyCode, 4 = rate
         //If the command does not contain 4 items print an error message and leave the method because it was executed incorrectly
-        String commandErrorMSG = "ERROR: Cannot execute updateRate command. You did not supply the correct parameters such as <fromCurrencyCode>, <toCurrency> and <rate>.";
-        if(!isCommandValid(4, commandErrorMSG))
+        if(!isCommandValid(4))
             return;
 
         //Confirm the conversion rate is actually a double
@@ -493,8 +488,7 @@ public class AdminClient extends Client
         
         //Confirm there is 3 items in the command list, 1 = command, 2 = fromCurrencyCode, 3 = toCurrencyCode
         //If the command does not contain 3 items print an error message and leave the method because it was executed incorrectly
-        String commandErrorMSG = "ERROR: Cannot execute removeRate command. You did not supply the correct parameters such as <fromCurrencyCode>, <toCurrency>.";
-        if(!isCommandValid(3, commandErrorMSG))
+        if(!isCommandValid(3))
             return;
 
         //Call the service to remove the rate
